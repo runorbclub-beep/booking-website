@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>浏览预约 - 霸族预约助手</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: white;
+      padding: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .mode-bar {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .mode-bar-text {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .mode-bar-action {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 12px 15px;
+      border: 2px solid #e1e8ed;
+      border-radius: 10px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: #667eea;
+    }
+
+    .search-btn {
+      padding: 12px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .back-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      margin-bottom: 12px;
+      border: none;
+      background: transparent;
+      color: #667eea;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 15px;
+    }
+
+    .tenant-card {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .tenant-card:active {
+      transform: scale(0.98);
+    }
+
+    .tenant-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      margin-right: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #667eea;
+      background: #f0f9ff;
+      flex-shrink: 0;
+    }
+
+    .tenant-logo img {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .tenant-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tenant-name {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tenant-owner {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .tenant-desc {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tenant-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      padding: 4px 10px;
+      background: #e3f2fd;
+      color: #667eea;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .list-arrow {
+      font-size: 24px;
+      color: #ccc;
+      margin-left: 10px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .empty-text {
+      font-size: 16px;
+    }
+
+    .lang-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <button class="lang-toggle" onclick="toggleLang()">EN</button>
+
+  <div class="header">
+    <button class="back-btn" onclick="goBack()">← 返回首页</button>
+
+    <div class="mode-bar" onclick="switchMode()">
+      <span class="mode-bar-text" id="modeText">当前：专家预约</span>
+      <span class="mode-bar-action">切换 ›</span>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" class="search-input" id="searchInput" placeholder="搜索名称或地址" onconfirm="doSearch()">
+      <button class="search-btn" onclick="doSearch()">搜索</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="tenantList"></div>
+    <div id="loading" class="loading">加载中...</div>
+    <div id="empty" class="empty" style="display: none">
+      <div class="empty-icon">📭</div>
+      <div class="empty-text">暂无入驻</div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://booking-api.billyli198841.workers.dev';
+    let lang = 'zh';
+    let mode = 'coach';
+    let tenants = [];
+    let filteredTenants = [];
+
+    const translations = {
+      zh: {
+        modeCoach: '当前：专家预约',
+        modeVenue: '当前：场地预约',
+        searchPlaceholder: '搜索名称或地址',
+        searchBtn: '搜索',
+        coachTag: '专家',
+        venueTag: '场地',
+        ownerPrefix: '负责人：',
+        emptyText: '暂无入驻'
+      },
+      en: {
+        modeCoach: 'Current: Coach Booking',
+        modeVenue: 'Current: Venue Booking',
+        searchPlaceholder: 'Search name or address',
+        searchBtn: 'Search',
+        coachTag: 'Coach',
+        venueTag: 'Venue',
+        ownerPrefix: 'Owner: ',
+        emptyText: 'No listings yet'
+      }
+    };
+
+    function toggleLang() {
+      lang = lang === 'zh' ? 'en' : 'zh';
+      updateText();
+      document.querySelector('.lang-toggle').textContent = lang === 'zh' ? 'EN' : '中文';
+    }
+
+    function updateText() {
+      const t = translations[lang];
+      document.getElementById('modeText').textContent = mode === 'coach' ? t.modeCoach : t.modeVenue;
+      document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+      document.querySelector('.search-btn').textContent = t.searchBtn;
+    }
+
+    function goBack() {
+      window.location.href = 'index.html';
+    }
+
+    function switchMode() {
+      mode = mode === 'coach' ? 'venue' : 'coach';
+      updateText();
+      loadTenants();
+    }
+
+    async function loadTenants() {
+      const loading = document.getElementById('loading');
+      const empty = document.getElementById('empty');
+      const list = document.getElementById('tenantList');
+
+      loading.style.display = 'block';
+      empty.style.display = 'none';
+      list.innerHTML = '';
+
+      try {
+        const response = await fetch(`${API_BASE}/api/tenants?type=${mode}&status=active&limit=100`);
+        const result = await response.json();
+
+        tenants = result.tenants || [];
+        filteredTenants = tenants;
+
+        loading.style.display = 'none';
+
+        if (filteredTenants.length === 0) {
+          empty.style.display = 'block';
+          empty.querySelector('.empty-text').textContent = translations[lang].emptyText;
+          return;
+        }
+
+        renderList();
+      } catch (err) {
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+        console.error(err);
+      }
+    }
+
+    function renderList() {
+      const t = translations[lang];
+      const list = document.getElementById('tenantList');
+
+      list.innerHTML = filteredTenants.map(tenant => `
+        <div class="tenant-card" onclick="goBooking('${tenant.id}')">
+          <div class="tenant-logo">
+            ${tenant.logo_url ? `<img src="${tenant.logo_url}" alt="${tenant.name}">` : `<span class="logo-text">${(tenant.name || '?')[0]}</span>`}
+          </div>
+          <div class="tenant-info">
+            <div class="tenant-name">${tenant.name || '—'}</div>
+            ${tenant.owner_name ? `<div class="tenant-owner">${t.ownerPrefix}${tenant.owner_name}</div>` : ''}
+            ${tenant.description ? `<div class="tenant-desc">${tenant.description}</div>` : ''}
+            <div class="tenant-tags">
+              <span class="tag">${mode === 'coach' ? t.coachTag : t.venueTag}</span>
+              ${tenant.address ? `<span class="tag">📍 ${tenant.address.slice(0, 10)}</span>` : ''}
+            </div>
+          </div>
+          <span class="list-arrow">›</span>
+        </div>
+      `).join('');
+    }
+
+    function doSearch() {
+      const keyword = document.getElementById('searchInput').value.toLowerCase().trim();
+
+      if (!keyword) {
+        filteredTenants = tenants;
+      } else {
+        filteredTenants = tenants.filter(t => {
+          const name = (t.name || '').toLowerCase();
+          const address = (t.address || '').toLowerCase();
+          const description = (t.description || '').toLowerCase();
+          return name.includes(keyword) || address.includes(keyword) || description.includes(keyword);
+        });
+      }
+
+      const empty = document.getElementById('empty');
+      if (filteredTenants.length === 0) {
+        document.getElementById('tenantList').innerHTML = '';
+        empty.style.display = 'block';
+      } else {
+        empty.style.display = 'none';
+        renderList();
+      }
+    }
+
+    function goBooking(tenantId) {
+      window.location.href = `booking.html?tenant=${tenantId}`;
+    }
+
+    // 初始化
+    loadTenants();
+  </script>
+</body>
+</html>

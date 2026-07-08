@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>霸族预约助手</title>
+  <meta name="description" content="专业预约管理平台 - 专家、场地预约管理">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      color: white;
+    }
+
+    .hero-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: 36px;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .hero-desc {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .action-section {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .action-card {
+      display: flex;
+      align-items: center;
+      padding: 20px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .action-card:last-child {
+      border-bottom: none;
+    }
+
+    .action-card:active {
+      background: #f9f9f9;
+    }
+
+    .action-icon {
+      font-size: 40px;
+      margin-right: 15px;
+      width: 60px;
+      text-align: center;
+    }
+
+    .action-info {
+      flex: 1;
+    }
+
+    .action-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .action-desc {
+      font-size: 14px;
+      color: #999;
+      display: block;
+    }
+
+    .action-arrow {
+      font-size: 24px;
+      color: #ccc;
+    }
+
+    .bottom-links {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .link-btn {
+      color: white;
+      font-size: 16px;
+      text-decoration: none;
+      padding: 10px 20px;
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 25px;
+      cursor: pointer;
+    }
+
+    .review-entry {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .review-btn {
+      color: rgba(255,255,255,0.8);
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .lang-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 28px;
+      }
+
+      .hero-icon {
+        font-size: 48px;
+      }
+
+      .action-card {
+        padding: 15px;
+      }
+
+      .action-icon {
+        font-size: 32px;
+        margin-right: 10px;
+        width: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="lang-toggle" onclick="toggleLang()">EN</button>
+
+  <div class="container">
+    <div class="hero">
+      <div class="hero-icon">📅</div>
+      <text class="hero-title" id="heroTitle">预约助手</text>
+      <text class="hero-desc" id="heroDesc">专业预约管理平台</text>
+    </div>
+
+    <div class="action-section">
+      <div class="action-card" onclick="goRegister('coach')">
+        <div class="action-icon">👤</div>
+        <div class="action-info">
+          <span class="action-name" id="coachTitle">专家入驻</span>
+          <span class="action-desc" id="coachDesc">教练、顾问、治疗师等入驻</span>
+        </div>
+        <span class="action-arrow">›</span>
+      </div>
+
+      <div class="action-card" onclick="goRegister('venue')">
+        <div class="action-icon">🏟️</div>
+        <div class="action-info">
+          <span class="action-name" id="venueTitle">场地入驻</span>
+          <span class="action-desc" id="venueDesc">球场、舞蹈室、工作室入驻</span>
+        </div>
+        <span class="action-arrow">›</span>
+      </div>
+
+      <div class="action-card" onclick="goBrowse()">
+        <div class="action-icon">🔍</div>
+        <div class="action-info">
+          <span class="action-name" id="browseTitle">浏览预约</span>
+          <span class="action-desc" id="browseDesc">查看所有专家和场地</span>
+        </div>
+        <span class="action-arrow">›</span>
+      </div>
+
+      <div class="action-card" onclick="goAdminLogin()">
+        <div class="action-icon">📋</div>
+        <div class="action-info">
+          <span class="action-name" id="adminTitle">管理员登录</span>
+          <span class="action-desc" id="adminDesc">管理您的工作室</span>
+        </div>
+        <span class="action-arrow">›</span>
+      </div>
+
+      <div class="action-card" onclick="goSuperAdmin()">
+        <div class="action-icon">🔐</div>
+        <div class="action-info">
+          <span class="action-name" id="superAdminTitle">超级管理员</span>
+          <span class="action-desc" id="superAdminDesc">审批入驻申请</span>
+        </div>
+        <span class="action-arrow">›</span>
+      </div>
+    </div>
+
+    <div class="bottom-links">
+      <a class="link-btn" onclick="showPrivacy()" id="privacyLink">隐私政策</a>
+    </div>
+  </div>
+
+  <script>
+    let lang = 'zh';
+
+    const translations = {
+      zh: {
+        heroTitle: '预约助手',
+        heroDesc: '专业预约管理平台',
+        coachTitle: '专家入驻',
+        coachDesc: '教练、顾问、治疗师等入驻',
+        venueTitle: '场地入驻',
+        venueDesc: '球场、舞蹈室、工作室入驻',
+        browseTitle: '浏览预约',
+        browseDesc: '查看所有专家和场地',
+        adminTitle: '管理员登录',
+        adminDesc: '管理您的工作室',
+        superAdminTitle: '超级管理员',
+        superAdminDesc: '审批入驻申请',
+        privacyLink: '隐私政策'
+      },
+      en: {
+        heroTitle: 'Booking Assistant',
+        heroDesc: 'Professional Booking Management Platform',
+        coachTitle: 'Expert Registration',
+        coachDesc: 'Coaches, consultants, therapists registration',
+        venueTitle: 'Venue Registration',
+        venueDesc: 'Golf courses, dance studios, workshops',
+        browseTitle: 'Browse Bookings',
+        browseDesc: 'View all experts and venues',
+        adminTitle: 'Admin Login',
+        adminDesc: 'Manage your studio',
+        superAdminTitle: 'Super Admin',
+        superAdminDesc: 'Approve registrations',
+        privacyLink: 'Privacy Policy'
+      }
+    };
+
+    function toggleLang() {
+      lang = lang === 'zh' ? 'en' : 'zh';
+      updateText();
+      document.querySelector('.lang-toggle').textContent = lang === 'zh' ? 'EN' : '中文';
+    }
+
+    function updateText() {
+      const t = translations[lang];
+      document.getElementById('heroTitle').textContent = t.heroTitle;
+      document.getElementById('heroDesc').textContent = t.heroDesc;
+      document.getElementById('coachTitle').textContent = t.coachTitle;
+      document.getElementById('coachDesc').textContent = t.coachDesc;
+      document.getElementById('venueTitle').textContent = t.venueTitle;
+      document.getElementById('venueDesc').textContent = t.venueDesc;
+      document.getElementById('browseTitle').textContent = t.browseTitle;
+      document.getElementById('browseDesc').textContent = t.browseDesc;
+      document.getElementById('adminTitle').textContent = t.adminTitle;
+      document.getElementById('adminDesc').textContent = t.adminDesc;
+      document.getElementById('privacyLink').textContent = t.privacyLink;
+    }
+
+    function goRegister(type) {
+      window.location.href = `register.html?type=${type}`;
+    }
+
+    function goBrowse() {
+      window.location.href = 'browse.html';
+    }
+
+    function goAdminLogin() {
+      window.location.href = 'admin.html';
+    }
+
+    function goSuperAdmin() {
+      window.location.href = 'super-admin.html';
+    }
+
+    function showPrivacy() {
+      alert('隐私政策\n\n我们收集您的昵称和手机号码用于预约服务。我们承诺不会将您的个人信息用于其他用途或分享给第三方。');
+    }
+  </script>
+</body>
+</html>

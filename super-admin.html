@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>超级管理员 - 审批中心</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .login-section {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #e1e8ed;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    button:hover {
+      background: #5568d3;
+    }
+
+    button.secondary {
+      background: #e1e8ed;
+      color: #333;
+    }
+
+    button.secondary:hover {
+      background: #d1d8dd;
+    }
+
+    button.danger {
+      background: #ef4444;
+    }
+
+    button.danger:hover {
+      background: #dc2626;
+    }
+
+    button.success {
+      background: #10b981;
+    }
+
+    button.success:hover {
+      background: #059669;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      background: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      color: #333;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .tab:hover {
+      background: #f5f5f5;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .tab.active {
+      background: #667eea;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .filter-bar {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .filter-item {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .card h3 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .info-row {
+      display: flex;
+      margin-bottom: 10px;
+    }
+
+    .info-label {
+      font-weight: 600;
+      width: 100px;
+      color: #555;
+    }
+
+    .info-value {
+      flex: 1;
+      color: #333;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-pending {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    .badge-active {
+      background: #d1fae5;
+      color: #059669;
+    }
+
+    .badge-rejected {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .badge-disabled {
+      background: #e5e7eb;
+      color: #6b7280;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .stats {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px 24px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔐 超级管理员 - 审批中心</h1>
+      <p style="color: #666;">管理所有专家和场地</p>
+    </div>
+
+    <!-- 登录区域 -->
+    <div class="login-section" id="loginSection">
+      <h2 style="margin-bottom: 15px;">超级管理员登录</h2>
+      <div class="form-group">
+        <label>用户名</label>
+        <input type="text" id="adminUsername" placeholder="请输入用户名">
+      </div>
+      <div class="form-group">
+        <label>密码</label>
+        <input type="password" id="adminPassword" placeholder="请输入密码">
+      </div>
+      <button onclick="login()">登录</button>
+      <button class="secondary" onclick="logout()">退出登录</button>
+    </div>
+
+    <!-- 登录后的内容 -->
+    <div id="content" class="hidden">
+      <!-- 标签页 -->
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('pending')">待审批</button>
+        <button class="tab" onclick="switchTab('all')">所有专家/场地</button>
+      </div>
+
+      <!-- 待审批页面 -->
+      <div class="tab-content active" id="tab-pending">
+        <div id="pendingList"></div>
+        <div id="pendingLoading" class="loading hidden">加载中...</div>
+        <div id="pendingEmpty" class="empty-state hidden">
+          <div class="empty-icon">✓</div>
+          <div>暂无待审批的申请</div>
+        </div>
+      </div>
+
+      <!-- 所有专家/场地页面 -->
+      <div class="tab-content" id="tab-all">
+        <!-- 统计卡片 -->
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-number" id="statTotal">0</div>
+            <div class="stat-label">总数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statActive">0</div>
+            <div class="stat-label">已通过</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statPending">0</div>
+            <div class="stat-label">待审批</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="statRejected">0</div>
+            <div class="stat-label">已拒绝</div>
+          </div>
+        </div>
+
+        <!-- 筛选栏 -->
+        <div class="filter-bar">
+          <div class="filter-item">
+            <label>类型</label>
+            <select id="filterType" onchange="loadAllTenants()">
+              <option value="">全部</option>
+              <option value="coach">专家/教练</option>
+              <option value="venue">场地</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <label>状态</label>
+            <select id="filterStatus" onchange="loadAllTenants()">
+              <option value="">全部</option>
+              <option value="pending">待审批</option>
+              <option value="active">已通过</option>
+              <option value="rejected">已拒绝</option>
+              <option value="disabled">已禁用</option>
+            </select>
+          </div>
+          <div class="filter-item">
+            <button class="secondary" onclick="resetFilters()">重置筛选</button>
+          </div>
+        </div>
+
+        <div id="allTenantsList"></div>
+        <div id="allLoading" class="loading hidden">加载中...</div>
+        <div id="allEmpty" class="empty-state hidden">
+          <div class="empty-icon">📋</div>
+          <div>暂无数据</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://booking-api.billyli198841.workers.dev';
+    let isLoggedIn = false;
+    let adminUsername = '';
+    let adminPassword = '';
+    let allTenants = [];
+
+    async function login() {
+      const username = document.getElementById('adminUsername').value;
+      const password = document.getElementById('adminPassword').value;
+
+      if (!username) {
+        alert('请输入用户名');
+        return;
+      }
+      if (!password) {
+        alert('请输入密码');
+        return;
+      }
+
+      // 验证用户名和密码
+      if (username !== 'billy') {
+        alert('用户名或密码错误');
+        return;
+      }
+
+      adminUsername = username;
+      adminPassword = password;
+      isLoggedIn = true;
+
+      // 保存到本地存储
+      localStorage.setItem('superAdminUsername', username);
+      localStorage.setItem('superAdminPassword', password);
+
+      document.getElementById('loginSection').querySelector('button').textContent = '已登录';
+      document.getElementById('content').classList.remove('hidden');
+
+      await loadPending();
+    }
+
+    function logout() {
+      isLoggedIn = false;
+      adminUsername = '';
+      adminPassword = '';
+      localStorage.removeItem('superAdminUsername');
+      localStorage.removeItem('superAdminPassword');
+      document.getElementById('adminUsername').value = '';
+      document.getElementById('adminPassword').value = '';
+      document.getElementById('loginSection').querySelector('button').textContent = '登录';
+      document.getElementById('content').classList.add('hidden');
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tab}`).classList.add('active');
+
+      if (tab === 'pending') {
+        loadPending();
+      } else if (tab === 'all') {
+        loadAllTenants();
+      }
+    }
+
+    async function loadPending() {
+      if (!isLoggedIn) {
+        alert('请先登录');
+        return;
+      }
+
+      const loading = document.getElementById('pendingLoading');
+      const empty = document.getElementById('pendingEmpty');
+      const list = document.getElementById('pendingList');
+
+      loading.classList.remove('hidden');
+      empty.classList.add('hidden');
+      list.innerHTML = '';
+
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/pending?password=${adminPassword}`);
+        const result = await response.json();
+
+        loading.classList.add('hidden');
+
+        if (result.success) {
+          if (result.tenants.length === 0) {
+            empty.classList.remove('hidden');
+            return;
+          }
+
+          list.innerHTML = result.tenants.map(tenant => `
+            <div class="card">
+              <h3>
+                <span>${tenant.type === 'coach' ? '👤' : '🏟️'} ${tenant.name}</span>
+                <span class="badge badge-pending">待审批</span>
+              </h3>
+              <div class="info-row">
+                <span class="info-label">类型:</span>
+                <span class="info-value">${tenant.type === 'coach' ? '专家/教练' : '场地'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">负责人:</span>
+                <span class="info-value">${tenant.owner_name || '-'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">电话:</span>
+                <span class="info-value">${tenant.phone || '-'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">地址:</span>
+                <span class="info-value">${tenant.address || '-'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">简介:</span>
+                <span class="info-value">${tenant.description || '-'}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">申请时间:</span>
+                <span class="info-value">${new Date(tenant.created_at).toLocaleString('zh-CN')}</span>
+              </div>
+              <div class="actions">
+                <button class="success" onclick="approve('${tenant.id}')">✓ 通过</button>
+                <button class="danger" onclick="reject('${tenant.id}')">✗ 拒绝</button>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          alert(result.error || '加载失败');
+        }
+      } catch (err) {
+        loading.classList.add('hidden');
+        console.error(err);
+        alert('网络错误');
+      }
+    }
+
+    async function loadAllTenants() {
+      if (!isLoggedIn) {
+        alert('请先登录');
+        return;
+      }
+
+      const type = document.getElementById('filterType').value;
+      const status = document.getElementById('filterStatus').value;
+
+      const loading = document.getElementById('allLoading');
+      const empty = document.getElementById('allEmpty');
+      const list = document.getElementById('allTenantsList');
+
+      loading.classList.remove('hidden');
+      empty.classList.add('hidden');
+      list.innerHTML = '';
+
+      try {
+        let url = `${API_BASE}/api/admin/tenants?password=${adminPassword}`;
+        if (type) url += `&type=${type}`;
+        if (status) url += `&status=${status}`;
+
+        const response = await fetch(url);
+        const result = await response.json();
+
+        loading.classList.add('hidden');
+
+        if (result.success) {
+          allTenants = result.tenants || [];
+
+          // 更新统计数据
+          updateStats();
+
+          if (allTenants.length === 0) {
+            empty.classList.remove('hidden');
+            return;
+          }
+
+          list.innerHTML = allTenants.map(tenant => {
+            const statusBadge = getStatusBadge(tenant.status);
+            return `
+              <div class="card">
+                <h3>
+                  <span>${tenant.type === 'coach' ? '👤' : '🏟️'} ${tenant.name}</span>
+                  <span class="badge ${statusBadge.class}">${statusBadge.text}</span>
+                </h3>
+                <div class="info-row">
+                  <span class="info-label">ID:</span>
+                  <span class="info-value">${tenant.id}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">类型:</span>
+                  <span class="info-value">${tenant.type === 'coach' ? '专家/教练' : '场地'}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">负责人:</span>
+                  <span class="info-value">${tenant.owner_name || '-'}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">电话:</span>
+                  <span class="info-value">${tenant.phone || '-'}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">地址:</span>
+                  <span class="info-value">${tenant.address || '-'}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">简介:</span>
+                  <span class="info-value">${tenant.description || '-'}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">创建时间:</span>
+                  <span class="info-value">${new Date(tenant.created_at).toLocaleString('zh-CN')}</span>
+                </div>
+                <div class="actions">
+                  ${tenant.status === 'pending' ? `
+                    <button class="success" onclick="approve('${tenant.id}')">✓ 通过</button>
+                    <button class="danger" onclick="reject('${tenant.id}')">✗ 拒绝</button>
+                  ` : ''}
+                  ${tenant.status === 'active' ? `
+                    <button class="secondary" onclick="disableTenant('${tenant.id}')">禁用</button>
+                  ` : ''}
+                  ${tenant.status === 'disabled' ? `
+                    <button class="success" onclick="enableTenant('${tenant.id}')">启用</button>
+                    <button class="danger" onclick="deleteTenant('${tenant.id}')">删除</button>
+                  ` : ''}
+                  ${tenant.status === 'rejected' ? `
+                    <button class="success" onclick="approve('${tenant.id}')">重新通过</button>
+                    <button class="danger" onclick="deleteTenant('${tenant.id}')">删除</button>
+                  ` : ''}
+                </div>
+              </div>
+            `;
+          }).join('');
+        } else {
+          alert(result.error || '加载失败');
+        }
+      } catch (err) {
+        loading.classList.add('hidden');
+        console.error(err);
+        alert('网络错误');
+      }
+    }
+
+    async function updateStats() {
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/tenants?password=${adminPassword}`);
+        const result = await response.json();
+
+        if (result.success) {
+          const tenants = result.tenants || [];
+          document.getElementById('statTotal').textContent = tenants.length;
+          document.getElementById('statActive').textContent = tenants.filter(t => t.status === 'active').length;
+          document.getElementById('statPending').textContent = tenants.filter(t => t.status === 'pending').length;
+          document.getElementById('statRejected').textContent = tenants.filter(t => t.status === 'rejected').length;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function getStatusBadge(status) {
+      switch (status) {
+        case 'pending': return { class: 'badge-pending', text: '待审批' };
+        case 'active': return { class: 'badge-active', text: '已通过' };
+        case 'rejected': return { class: 'badge-rejected', text: '已拒绝' };
+        case 'disabled': return { class: 'badge-disabled', text: '已禁用' };
+        default: return { class: '', text: status };
+      }
+    }
+
+    async function approve(tenantId) {
+      if (!confirm('确认通过该申请？')) return;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/approve`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tenantId, password: adminPassword })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          alert('✓ 审批通过');
+          loadPending();
+          loadAllTenants();
+        } else {
+          alert(result.error || '操作失败');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('网络错误');
+      }
+    }
+
+    async function reject(tenantId) {
+      const reason = prompt('请输入拒绝原因（可选）:');
+      if (reason === null) return;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/reject`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tenantId, password: adminPassword, reason })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          alert('✗ 已拒绝申请');
+          loadPending();
+          loadAllTenants();
+        } else {
+          alert(result.error || '操作失败');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('网络错误');
+      }
+    }
+
+    async function disableTenant(tenantId) {
+      if (!confirm('确认禁用该专家/场地？')) return;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/tenants/${tenantId}/disable`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: adminPassword })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          alert('✓ 已禁用');
+          loadAllTenants();
+        } else {
+          alert(result.error || '操作失败');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('网络错误');
+      }
+    }
+
+    async function enableTenant(tenantId) {
+      if (!confirm('确认启用该专家/场地？')) return;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/tenants/${tenantId}/enable`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: adminPassword })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          alert('✓ 已启用');
+          loadAllTenants();
+        } else {
+          alert(result.error || '操作失败');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('网络错误');
+      }
+    }
+
+    async function deleteTenant(tenantId) {
+      if (!confirm('确认永久删除该专家/场地？此操作不可恢复！')) return;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/tenants/${tenantId}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: adminPassword })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          alert('✓ 已删除');
+          loadAllTenants();
+        } else {
+          alert(result.error || '操作失败');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('网络错误');
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('filterType').value = '';
+      document.getElementById('filterStatus').value = '';
+      loadAllTenants();
+    }
+
+    // 页面加载时检查本地存储的用户名和密码
+    window.addEventListener('load', () => {
+      const savedUsername = localStorage.getItem('superAdminUsername');
+      const savedPassword = localStorage.getItem('superAdminPassword');
+      if (savedUsername && savedPassword) {
+        document.getElementById('adminUsername').value = savedUsername;
+        document.getElementById('adminPassword').value = savedPassword;
+        adminUsername = savedUsername;
+        adminPassword = savedPassword;
+        isLoggedIn = true;
+        document.getElementById('loginSection').querySelector('button').textContent = '已登录';
+        document.getElementById('content').classList.remove('hidden');
+        loadPending();
+      }
+    });
+  </script>
+</body>
+</html>

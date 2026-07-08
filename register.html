@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>入驻 - 预约平台</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 500px;
+      width: 100%;
+      padding: 40px 30px;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+      text-align: center;
+      font-size: 28px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e1e8ed;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .radio-label input[type="radio"] {
+      width: auto;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .success {
+      background: #10b981;
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      display: none;
+    }
+
+    .success h3 {
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    .success p {
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 15px;
+    }
+
+    .success a {
+      color: white;
+      text-decoration: underline;
+    }
+
+    .error {
+      background: #ef4444;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .lang-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    small {
+      font-size: 14px;
+    }
+
+    .name-available {
+      color: #10b981;
+    }
+
+    .name-unavailable {
+      color: #ef4444;
+    }
+
+    .name-checking {
+      color: #f59e0b;
+    }
+  </style>
+</head>
+<body>
+  <button class="lang-toggle" onclick="toggleLang()">EN</button>
+
+  <div class="container">
+    <h1 id="title">专家/场地入驻</h1>
+
+    <form id="registerForm" onsubmit="handleSubmit(event)">
+      <div class="form-group">
+        <label id="typeLabel">类型</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="type" value="coach" required>
+            <span id="coachLabel">专家/教练</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="type" value="venue">
+            <span id="venueLabel">场地</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="name" id="nameLabel">名称</label>
+        <input type="text" id="name" name="name" required placeholder="张三网球教练" oninput="checkNameAvailability()">
+        <small id="nameStatus" style="display: none; margin-top: 5px;"></small>
+      </div>
+
+      <div class="form-group">
+        <label for="ownerName" id="ownerNameLabel">负责人姓名</label>
+        <input type="text" id="ownerName" name="ownerName" placeholder="张三">
+      </div>
+
+      <div class="form-group">
+        <label for="phone" id="phoneLabel">联系电话</label>
+        <input type="tel" id="phone" name="phone" placeholder="13800138000">
+      </div>
+
+      <div class="form-group">
+        <label for="address" id="addressLabel">地址（场地类型必填）</label>
+        <input type="text" id="address" name="address" placeholder="上海市浦东新区...">
+      </div>
+
+      <div class="form-group">
+        <label for="description" id="descLabel">简介</label>
+        <textarea id="description" name="description" placeholder="简要描述您的专业领域或场地特色"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="adminPassword" id="pwdLabel">管理密码</label>
+        <input type="password" id="adminPassword" name="adminPassword" required minlength="6" placeholder="至少6位">
+      </div>
+
+      <button type="submit" id="submitBtn">提交入驻</button>
+    </form>
+
+    <div class="success" id="successMsg">
+      <h3 id="successTitle">🎉 入驻成功！</h3>
+      <p id="successDesc">您的工作室已创建，正在等待审批</p>
+      <p><strong>工作室名称:</strong> <span id="tenantName"></span></p>
+      <p><strong>⏰ 审批状态:</strong> <span style="color: #f59e0b;">等待审批中...</span></p>
+      <p style="font-size: 14px; color: #666; margin-top: 10px;">请记住您的工作室名称，审批通过后使用该名称和管理密码登录</p>
+      <a id="manageLink" href="">关闭 →</a>
+    </div>
+
+    <div class="error" id="errorMsg"></div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://booking-api.billyli198841.workers.dev';
+    let lang = 'zh';
+    let nameCheckTimeout = null;
+
+    // 从URL参数读取类型并自动选中
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeParam = urlParams.get('type');
+    if (typeParam === 'coach' || typeParam === 'venue') {
+      const radio = document.querySelector(`input[name="type"][value="${typeParam}"]`);
+      if (radio) radio.checked = true;
+    }
+
+    // 实时检验名称可用性
+    async function checkNameAvailability() {
+      const nameInput = document.getElementById('name');
+      const nameStatus = document.getElementById('nameStatus');
+      const name = nameInput.value.trim();
+
+      if (!name) {
+        nameStatus.style.display = 'none';
+        return;
+      }
+
+      // 显示检查中状态
+      nameStatus.style.display = 'block';
+      nameStatus.className = 'name-checking';
+      nameStatus.textContent = '检查中...';
+
+      // 清除之前的定时器
+      if (nameCheckTimeout) clearTimeout(nameCheckTimeout);
+
+      // 延迟500ms检查，避免频繁请求
+      nameCheckTimeout = setTimeout(async () => {
+        try {
+          const response = await fetch(`${API_BASE}/api/tenants/check-name?name=${encodeURIComponent(name)}`);
+          const result = await response.json();
+
+          if (result.success && result.available !== undefined) {
+            if (result.available) {
+              nameStatus.className = 'name-available';
+              nameStatus.textContent = '✓ 该名称可用';
+            } else {
+              nameStatus.className = 'name-unavailable';
+              nameStatus.textContent = '✗ 该名称已被使用';
+            }
+          }
+        } catch (err) {
+          console.error('名称检查失败:', err);
+          nameStatus.style.display = 'none';
+        }
+      }, 500);
+    }
+
+
+    const translations = {
+      zh: {
+        title: '专家/场地入驻',
+        typeLabel: '类型',
+        coachLabel: '专家/教练',
+        venueLabel: '场地',
+        nameLabel: '名称',
+        ownerNameLabel: '负责人姓名',
+        phoneLabel: '联系电话',
+        addressLabel: '地址（场地类型必填）',
+        descLabel: '简介',
+        pwdLabel: '管理密码',
+        submitBtn: '提交入驻',
+        successTitle: '🎉 入驻成功！',
+        successDesc: '您的工作室已创建，正在等待审批'
+      },
+      en: {
+        title: 'Register - Expert/Venue',
+        typeLabel: 'Type',
+        coachLabel: 'Expert/Coach',
+        venueLabel: 'Venue',
+        nameLabel: 'Name',
+        ownerNameLabel: 'Owner Name',
+        phoneLabel: 'Phone',
+        addressLabel: 'Address (required for venue)',
+        descLabel: 'Description',
+        pwdLabel: 'Admin Password',
+        submitBtn: 'Submit',
+        successTitle: '🎉 Registration Successful!',
+        successDesc: 'Your studio has been created'
+      }
+    };
+
+    function toggleLang() {
+      lang = lang === 'zh' ? 'en' : 'zh';
+      const t = translations[lang];
+
+      document.getElementById('title').textContent = t.title;
+      document.getElementById('typeLabel').textContent = t.typeLabel;
+      document.getElementById('coachLabel').textContent = t.coachLabel;
+      document.getElementById('venueLabel').textContent = t.venueLabel;
+      document.getElementById('idLabel').textContent = t.idLabel;
+      document.getElementById('nameLabel').textContent = t.nameLabel;
+      document.getElementById('ownerNameLabel').textContent = t.ownerNameLabel;
+      document.getElementById('phoneLabel').textContent = t.phoneLabel;
+      document.getElementById('addressLabel').textContent = t.addressLabel;
+      document.getElementById('descLabel').textContent = t.descLabel;
+      document.getElementById('pwdLabel').textContent = t.pwdLabel;
+      document.getElementById('submitBtn').textContent = t.submitBtn;
+
+      document.querySelector('.lang-toggle').textContent = lang === 'zh' ? 'EN' : '中文';
+    }
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData);
+
+      // 简单的客户端验证
+      if (data.type === 'venue' && !data.address) {
+        showError(lang === 'zh' ? '场地类型必须填写地址' : 'Address is required for venue');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/api/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          document.getElementById('registerForm').style.display = 'none';
+          document.getElementById('successMsg').style.display = 'block';
+          document.getElementById('tenantName').textContent = result.tenant.name;
+          document.getElementById('manageLink').href = 'index.html';
+        } else {
+          showError(result.error || (lang === 'zh' ? '注册失败' : 'Registration failed'));
+        }
+      } catch (err) {
+        showError(lang === 'zh' ? '网络错误，请稍后重试' : 'Network error, please try again');
+        console.error(err);
+      }
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(() => el.style.display = 'none', 5000);
+    }
+  </script>
+</body>
+</html>

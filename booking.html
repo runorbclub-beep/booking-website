@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>预约 - 预约平台</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 500px;
+      width: 100%;
+      padding: 40px 30px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e1e8ed;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    .slots {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .slot {
+      padding: 12px;
+      background: #f9fafb;
+      border: 2px solid #e1e8ed;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .slot:hover:not(.disabled) {
+      border-color: #667eea;
+      background: #f0f9ff;
+    }
+
+    .slot.selected {
+      border-color: #667eea;
+      background: #667eea;
+      color: white;
+    }
+
+    .slot.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: #e5e7eb;
+    }
+
+    .error {
+      background: #ef4444;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .success {
+      background: #10b981;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .lang-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+
+    .back-btn {
+      background: #e1e8ed;
+      color: #333;
+      padding: 10px 20px;
+      margin-bottom: 20px;
+      width: auto;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <button class="lang-toggle" onclick="toggleLang()">EN</button>
+
+  <div class="container">
+    <div class="header">
+      <h1 id="title">预约</h1>
+      <p id="subtitle">请填写信息完成预约</p>
+    </div>
+
+    <!-- Step 1: 输入信息 -->
+    <div class="step active" id="step1">
+      <div class="form-group">
+        <label for="customerName" id="nameLabel">姓名</label>
+        <input type="text" id="customerName" placeholder="张三">
+      </div>
+
+      <div class="form-group">
+        <label for="customerPhone" id="phoneLabel">手机号</label>
+        <input type="tel" id="customerPhone" placeholder="13800138000" maxlength="11">
+      </div>
+
+      <div class="form-group">
+        <label for="note" id="noteLabel">备注（选填）</label>
+        <textarea id="note" placeholder="有什么需要特别说明的吗？"></textarea>
+      </div>
+
+      <button onclick="goToStep2()" id="btnNext">下一步</button>
+
+      <div class="error" id="errorMsg"></div>
+    </div>
+
+    <!-- Step 2: 选择日期和时段 -->
+    <div class="step" id="step2">
+      <button class="back-btn" onclick="goBack(1)">← 返回</button>
+
+      <div class="form-group">
+        <label for="date" id="dateLabel">选择日期</label>
+        <input type="date" id="date" onchange="loadSlots()">
+      </div>
+
+      <div class="form-group">
+        <label id="slotsLabel">选择时段</label>
+        <div class="slots" id="slots"></div>
+      </div>
+
+      <button onclick="proceedToStep3()" id="btnProceed">下一步</button>
+    </div>
+
+    <!-- Step 3: 确认信息 -->
+    <div class="step" id="step3">
+      <button class="back-btn" onclick="goBack(2)">← 返回</button>
+
+      <div class="form-group" style="background: #f9fafb; padding: 15px; border-radius: 10px;">
+        <p><strong id="summaryDate">日期:</strong> <span id="summaryDateValue"></span></p>
+        <p><strong id="summaryTime">时段:</strong> <span id="summaryTimeValue"></span></p>
+        <p><strong id="summaryName">姓名:</strong> <span id="summaryNameValue"></span></p>
+        <p><strong id="summaryPhone">手机号:</strong> <span id="summaryPhoneValue"></span></p>
+        <p><strong id="summaryNote">备注:</strong> <span id="summaryNoteValue"></span></p>
+      </div>
+
+      <button onclick="submitBooking()" id="btnSubmit">提交预约</button>
+    </div>
+
+    <!-- 成功提示 -->
+    <div class="success" id="successMsg">
+      <h3>🎉 预约成功！</h3>
+      <p id="successDesc">您的预约已提交，等待确认</p>
+      <p><strong id="summaryDate2">日期:</strong> <span id="finalDate"></span></p>
+      <p><strong id="summaryTime2">时段:</strong> <span id="finalTime"></span></p>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://booking-api.billyli198841.workers.dev';
+    let lang = 'zh';
+    let tenantId = null;
+    let tenantInfo = null;
+    let selectedSlot = null;
+    let customerPhone = null;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    tenantId = urlParams.get('tenant');
+
+    const translations = {
+      zh: {
+        title: '预约',
+        subtitle: '请填写信息完成预约',
+        phoneLabel: '手机号',
+        btnVerify: '验证',
+        dateLabel: '选择日期',
+        slotsLabel: '选择时段',
+        btnProceed: '下一步',
+        nameLabel: '姓名',
+        noteLabel: '备注（选填）',
+        btnSubmit: '提交预约',
+        summaryDate: '日期:',
+        summaryTime: '时段:',
+        summaryPhone: '手机号:',
+        successTitle: '🎉 预约成功！',
+        successDesc: '您的预约已提交，等待确认',
+        errorInvalidTenant: '无效的工作室ID',
+        errorNotInWhitelist: '您不在预约白名单中，请联系工作室管理员',
+        errorNetwork: '网络错误，请稍后重试',
+        errorSelectSlot: '请选择时段',
+        loading: '加载中...',
+        noSlots: '今日无可预约时段',
+        back: '← 返回',
+        summaryDate2: '日期:',
+        summaryTime2: '时段:'
+      },
+      en: {
+        title: 'Booking',
+        subtitle: 'Fill in the information to complete booking',
+        phoneLabel: 'Phone Number',
+        btnVerify: 'Verify',
+        dateLabel: 'Select Date',
+        slotsLabel: 'Select Time Slot',
+        btnProceed: 'Next',
+        nameLabel: 'Name',
+        noteLabel: 'Note (optional)',
+        btnSubmit: 'Submit Booking',
+        summaryDate: 'Date:',
+        summaryTime: 'Time Slot:',
+        summaryPhone: 'Phone:',
+        successTitle: '🎉 Booking Successful!',
+        successDesc: 'Your booking has been submitted, awaiting confirmation',
+        errorInvalidTenant: 'Invalid studio ID',
+        errorNotInWhitelist: 'You are not in the whitelist, please contact the studio admin',
+        errorNetwork: 'Network error, please try again later',
+        errorSelectSlot: 'Please select a time slot',
+        loading: 'Loading...',
+        noSlots: 'No available slots today',
+        back: '← Back',
+        summaryDate2: 'Date:',
+        summaryTime2: 'Time Slot:'
+      }
+    };
+
+    function toggleLang() {
+      lang = lang === 'zh' ? 'en' : 'zh';
+      updateUIText();
+      document.querySelector('.lang-toggle').textContent = lang === 'zh' ? 'EN' : '中文';
+    }
+
+    function updateUIText() {
+      const t = translations[lang];
+      document.getElementById('title').textContent = t.title;
+      document.getElementById('subtitle').textContent = t.subtitle;
+      document.getElementById('phoneLabel').textContent = t.phoneLabel;
+      document.getElementById('btnVerify').textContent = t.btnVerify;
+      document.getElementById('dateLabel').textContent = t.dateLabel;
+      document.getElementById('slotsLabel').textContent = t.slotsLabel;
+      document.getElementById('btnProceed').textContent = t.btnProceed;
+      document.getElementById('nameLabel').textContent = t.nameLabel;
+      document.getElementById('noteLabel').textContent = t.noteLabel;
+      document.getElementById('btnSubmit').textContent = t.btnSubmit;
+      document.getElementById('summaryDate').textContent = t.summaryDate;
+      document.getElementById('summaryTime').textContent = t.summaryTime;
+      document.getElementById('summaryPhone').textContent = t.summaryPhone;
+      document.getElementById('successDesc').textContent = t.successDesc;
+      document.getElementById('summaryDate2').textContent = t.summaryDate2;
+      document.getElementById('summaryTime2').textContent = t.summaryTime2;
+    }
+
+    function goToStep2() {
+      const customerName = document.getElementById('customerName').value.trim();
+      const customerPhone = document.getElementById('customerPhone').value.trim();
+      const note = document.getElementById('note').value.trim();
+
+      if (!customerName) {
+        showError('请输入姓名');
+        return;
+      }
+
+      if (!customerPhone) {
+        showError('请输入手机号');
+        return;
+      }
+
+      if (!/^1\d{10}$/.test(customerPhone)) {
+        showError('请输入正确的手机号');
+        return;
+      }
+
+      // 保存数据
+      window.customerInfo = {
+        name: customerName,
+        phone: customerPhone,
+        note: note
+      };
+
+      goToStep(2);
+      initDateSelector();
+    }
+
+    function initDateSelector() {
+      const dateInput = document.getElementById('date');
+      const today = new Date();
+      const maxDate = new Date();
+      maxDate.setDate(today.getDate() + 30);
+
+      dateInput.min = today.toISOString().split('T')[0];
+      dateInput.max = maxDate.toISOString().split('T')[0];
+      dateInput.value = today.toISOString().split('T')[0];
+
+      loadSlots();
+    }
+
+    async function loadSlots() {
+      const date = document.getElementById('date').value;
+      if (!date) return;
+
+      const slotsContainer = document.getElementById('slots');
+      slotsContainer.innerHTML = `<div class="loading">${translations[lang].loading}</div>`;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/slots?tenantId=${tenantId}&date=${date}`);
+        const result = await response.json();
+
+        if (result.success) {
+          if (result.slots.length === 0) {
+            slotsContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #999; padding: 20px;">${translations[lang].noSlots}</div>`;
+            return;
+          }
+
+          slotsContainer.innerHTML = result.slots.map((slot, index) => `
+            <div class="slot ${slot.available ? '' : 'disabled'}"
+                 onclick="${slot.available ? `selectSlot(${index}, '${slot.label}', ${slot.index})` : ''}">
+              ${slot.label}
+              ${!slot.available ? ' (已约满)' : ''}
+            </div>
+          `).join('');
+        } else {
+          slotsContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #ef4444;">${result.error}</div>`;
+        }
+      } catch (err) {
+        console.error(err);
+        slotsContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #ef4444;">${translations[lang].errorNetwork}</div>`;
+      }
+    }
+
+    function selectSlot(index, label, slotIndex) {
+      document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+      document.querySelectorAll('.slot')[index].classList.add('selected');
+
+      selectedSlot = { label, index: slotIndex };
+    }
+
+    function proceedToStep3() {
+      if (!selectedSlot) {
+        showError(translations[lang].errorSelectSlot);
+        return;
+      }
+
+      const date = document.getElementById('date').value;
+      document.getElementById('summaryDateValue').textContent = date;
+      document.getElementById('summaryTimeValue').textContent = selectedSlot.label;
+      document.getElementById('summaryNameValue').textContent = window.customerInfo.name;
+      document.getElementById('summaryPhoneValue').textContent = window.customerInfo.phone;
+      document.getElementById('summaryNoteValue').textContent = window.customerInfo.note || '无';
+
+      goToStep(3);
+    }
+
+    async function submitBooking() {
+      const date = document.getElementById('date').value;
+      if (!date) {
+        showError('请选择日期');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/api/bookings`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tenantId,
+            customerPhone: window.customerInfo.phone,
+            customerName: window.customerInfo.name,
+            date,
+            slotIndex: selectedSlot.index,
+            timeLabel: selectedSlot.label,
+            note: window.customerInfo.note || ''
+          })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          document.getElementById('finalDate').textContent = date;
+          document.getElementById('finalTime').textContent = selectedSlot.label;
+
+          document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+          document.getElementById('successMsg').style.display = 'block';
+        } else {
+          showError(result.error || '预约失败');
+        }
+      } catch (err) {
+        console.error(err);
+        showError(translations[lang].errorNetwork);
+      }
+    }
+
+    function goToStep(stepNum) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById(`step${stepNum}`).classList.add('active');
+      hideError();
+    }
+
+    function goBack(stepNum) {
+      goToStep(stepNum);
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function hideError() {
+      document.getElementById('errorMsg').style.display = 'none';
+    }
+
+    // 初始化
+    if (!tenantId) {
+      showError(translations[lang].errorInvalidTenant);
+    }
+  </script>
+</body>
+</html>
