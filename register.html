@@ -215,20 +215,17 @@
         <textarea id="description" name="description" placeholder="简要描述您的专业领域或场地特色"></textarea>
       </div>
 
-      <div class="form-group">
-        <label for="adminPassword" id="pwdLabel">管理密码</label>
-        <input type="password" id="adminPassword" name="adminPassword" required minlength="6" placeholder="至少6位">
-      </div>
-
       <button type="submit" id="submitBtn">提交入驻</button>
     </form>
 
     <div class="success" id="successMsg">
       <h3 id="successTitle">🎉 入驻成功！</h3>
       <p id="successDesc">您的工作室已创建，正在等待审批</p>
-      <p><strong>工作室名称:</strong> <span id="tenantName"></span></p>
+      <p><strong>机构名称:</strong> <span id="tenantName"></span></p>
+      <p><strong>管理密码:</strong> <span id="adminPasswordResult" style="color: #f59e0b; font-size: 18px;">123456</span></p>
       <p><strong>⏰ 审批状态:</strong> <span style="color: #f59e0b;">等待审批中...</span></p>
-      <p style="font-size: 14px; color: #666; margin-top: 10px;">请记住您的工作室名称，审批通过后使用该名称和管理密码登录</p>
+      <p style="font-size: 14px; color: #666; margin-top: 10px;">请记住机构名称和密码，审批通过后使用机构名称登录管理后台</p>
+      <p style="font-size: 12px; color: #999;">🔐 登录后可在"密码管理"中修改密码</p>
       <a id="manageLink" href="">关闭 →</a>
     </div>
 

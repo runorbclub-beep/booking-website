@@ -276,6 +276,104 @@
     .modal-content h2 {
       margin-bottom: 20px;
     }
+
+    /* 社交媒体分享样式 */
+    .social-share {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    .social-share h3 {
+      margin-bottom: 15px;
+      color: #333;
+      font-size: 18px;
+    }
+
+    .social-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .social-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px;
+      background: white;
+      border: 2px solid #e1e8ed;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .social-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .social-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .social-btn span:not(.social-icon) {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    /* 平台特定颜色 */
+    .social-btn.facebook:hover {
+      border-color: #1877f2;
+      background: #f0f8ff;
+    }
+
+    .social-btn.twitter:hover {
+      border-color: #1da1f2;
+      background: #f0f8ff;
+    }
+
+    .social-btn.linkedin:hover {
+      border-color: #0077b5;
+      background: #f0f8ff;
+    }
+
+    .social-btn.whatsapp:hover {
+      border-color: #25d366;
+      background: #f0fff0;
+    }
+
+    .social-btn.copy:hover {
+      border-color: #4a90d9;
+      background: #f0f8ff;
+    }
+
+    /* 机构名称显示样式 */
+    .org-name-display {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 24px 0;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .org-name-display h3 {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 16px;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .org-name-content {
+      font-size: 28px;
+      font-weight: 600;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -346,22 +444,50 @@
     <div class="card">
       <h2 id="shareTitle">分享工作室</h2>
       <p id="shareDesc" style="margin-bottom: 20px; color: #666;">
-        将下面的链接或二维码发送给您的客户，他们就可以预约了
+        将二维码或链接分享到社交媒体，让更多客户了解您的服务
       </p>
 
-      <div class="link-box">
-        <h3>🔗 客户预约方式</h3>
-        <p style="color: #666; font-size: 14px; line-height: 1.6;">
-          <strong>推荐方式：</strong>让客户扫描下方小程序码直接预约<br>
-          <small style="color: #999;">客户扫描小程序码后，将直接进入预约页面</small>
-        </p>
+      <!-- 机构名称显示 -->
+      <div class="org-name-display" id="orgNameDisplay" style="display: none;">
+        <h3>🏢 机构名称</h3>
+        <div class="org-name-content" id="orgNameContent"></div>
       </div>
 
       <div class="qrcode">
         <h3>📱 您的二维码</h3>
-        <p style="font-size: 12px; color: #666; margin-bottom: 10px;">客户扫描或点击图片即可预约</p>
-        <img id="qrcode" src="" alt="二维码" onclick="window.open(document.getElementById('shareUrl').textContent, '_blank')" style="cursor: pointer;" title="点击跳转到预约页面">
-        <button onclick="downloadQRCode()" style="margin-top: 10px;" id="btnDownloadQR">下载二维码</button>
+        <p style="font-size: 12px; color: #666; margin-bottom: 10px;">客户扫描小程序码即可预约</p>
+        <div style="text-align: center; margin: 15px 0;">
+          <img id="qrcode" src="" alt="二维码" style="max-width: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        </div>
+        <button onclick="downloadQRCode()" style="margin-top: 10px;" id="btnDownloadQR">💾 下载二维码</button>
+      </div>
+
+      <!-- 社交媒体分享 -->
+      <div class="social-share">
+        <h3>📤 分享到社交媒体</h3>
+        <p style="font-size: 12px; color: #666; margin-bottom: 15px;">点击下方平台分享预约链接</p>
+        <div class="social-buttons">
+          <button class="social-btn facebook" onclick="shareToFacebook()">
+            <span class="social-icon">📘</span>
+            <span>Facebook</span>
+          </button>
+          <button class="social-btn twitter" onclick="shareToTwitter()">
+            <span class="social-icon">🐦</span>
+            <span>Twitter</span>
+          </button>
+          <button class="social-btn linkedin" onclick="shareToLinkedIn()">
+            <span class="social-icon">💼</span>
+            <span>LinkedIn</span>
+          </button>
+          <button class="social-btn whatsapp" onclick="shareToWhatsApp()">
+            <span class="social-icon">💬</span>
+            <span>WhatsApp</span>
+          </button>
+          <button class="social-btn copy-link" onclick="copyBookingLink()">
+            <span class="social-icon">🔗</span>
+            <span>复制链接</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -574,6 +700,18 @@
         ${currentTenant.description ? `<p><strong>${t.description}:</strong> ${currentTenant.description}</p>` : ''}
       `;
       document.getElementById('tenantInfo').innerHTML = infoHtml;
+
+      // 显示机构名称
+      const orgNameDisplay = document.getElementById('orgNameDisplay');
+      const orgNameContent = document.getElementById('orgNameContent');
+      if (orgNameDisplay && orgNameContent) {
+        orgNameDisplay.style.display = 'block';
+        orgNameContent.innerHTML = `
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px 20px; border-radius: 8px; color: white; text-align: center; font-size: 18px; font-weight: 600;">
+            ${currentTenant.name}
+          </div>
+        `;
+      }
 
       // 生成小程序码
       try {
@@ -808,6 +946,55 @@
         console.error(err);
         alert('网络错误');
       }
+    }
+
+    // 社交媒体分享函数
+    function getBookingLink() {
+      if (!currentTenant || !currentTenant.name) return '#';
+      // 暂时使用GitHub Pages地址，部署后需要更新
+      return `https://runorbclub-beep.github.io/booking-website/booking.html?tenant=${tenantId}`;
+    }
+
+    function getShareText() {
+      const name = currentTenant ? currentTenant.name : '我们';
+      const type = currentTenant && currentTenant.type === 'coach' ? '专家' : '场地';
+      return `🎉 预约${name}（${type}）- 专业服务，在线预约，方便快捷！`;
+    }
+
+    function copyBookingLink() {
+      const link = getBookingLink();
+      navigator.clipboard.writeText(link).then(() => {
+        const btn = event.target.closest('.social-btn');
+        const originalText = btn.querySelector('span:last-child').textContent;
+        btn.querySelector('span:last-child').textContent = '已复制!';
+        setTimeout(() => btn.querySelector('span:last-child').textContent = originalText, 2000);
+      }).catch(() => {
+        alert('复制失败，请手动复制链接');
+      });
+    }
+
+    function shareToFacebook() {
+      const link = encodeURIComponent(getBookingLink());
+      const text = encodeURIComponent(getShareText());
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${text}`, '_blank');
+    }
+
+    function shareToTwitter() {
+      const link = encodeURIComponent(getBookingLink());
+      const text = encodeURIComponent(getShareText());
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${link}`, '_blank');
+    }
+
+    function shareToLinkedIn() {
+      const link = encodeURIComponent(getBookingLink());
+      const text = encodeURIComponent(getShareText());
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${link}&title=${text}`, '_blank');
+    }
+
+    function shareToWhatsApp() {
+      const link = encodeURIComponent(getBookingLink());
+      const text = encodeURIComponent(getShareText());
+      window.open(`https://wa.me/?text=${text}%20${link}`, '_blank');
     }
 
     // 初始化
