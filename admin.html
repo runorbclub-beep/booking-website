@@ -494,8 +494,10 @@
 
         if (result.success) {
           if (result.role === 'super_admin') {
+            sessionStorage.setItem('superAdminInfo', JSON.stringify({ username: orgName }));
             window.location.href = 'super-admin.html';
           } else {
+            sessionStorage.setItem('adminInfo', JSON.stringify({ tenantId: result.tenantId, orgName }));
             window.location.href = `admin-dashboard.html?id=${result.tenantId}`;
           }
         } else {
