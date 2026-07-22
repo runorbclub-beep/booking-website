@@ -35,6 +35,19 @@
     .hero-icon {
       font-size: 64px;
       margin-bottom: 20px;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: bold;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.3);
     }
 
     .hero-title {
@@ -170,7 +183,7 @@
 
   <div class="container">
     <div class="hero">
-      <div class="hero-icon">📅</div>
+      <div class="hero-icon" id="currentDate"></div>
       <text class="hero-title" id="heroTitle">Booking Assistant</text>
       <text class="hero-desc" id="heroDesc">Professional Booking Management Platform</text>
     </div>
@@ -227,6 +240,7 @@
     function toggleLang() {
       lang = lang === 'zh' ? 'en' : 'zh';
       updateText();
+      updateDate();
       document.querySelector('.lang-toggle').textContent = lang === 'zh' ? 'EN' : '中文';
     }
 
@@ -253,8 +267,30 @@
       alert('隐私政策\n\n我们收集您的昵称和手机号码用于预约服务。我们承诺不会将您的个人信息用于其他用途或分享给第三方。');
     }
 
+    function updateDate() {
+      const now = new Date();
+      const day = now.getDate();
+      const months = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      const zhMonths = [
+        '1月', '2月', '3月', '4月', '5月', '6月',
+        '7月', '8月', '9月', '10月', '11月', '12月'
+      ];
+
+      const month = lang === 'zh' ? zhMonths[now.getMonth()] : months[now.getMonth()];
+
+      if (lang === 'zh') {
+        document.getElementById('currentDate').textContent = `${month}${day}日`;
+      } else {
+        document.getElementById('currentDate').textContent = day;
+      }
+    }
+
     // 初始化：页面加载时设置默认语言文本
     updateText();
+    updateDate();
   </script>
 </body>
 </html>
