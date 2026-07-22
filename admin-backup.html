@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理后台 - 预约平台</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f7fa;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: white;
+      padding: 15px 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 20px;
+      color: #333;
+    }
+
+    .tabs {
+      display: flex;
+      background: white;
+      padding: 10px 20px;
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      background: #e1e8ed;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.3s;
+    }
+
+    .tab.active {
+      background: #667eea;
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+      font-weight: 500;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #e1e8ed;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background: #5568d3;
+    }
+
+    button.secondary {
+      background: #e1e8ed;
+      color: #333;
+    }
+
+    button.secondary:hover {
+      background: #d1d8dd;
+    }
+
+    button.danger {
+      background: #ef4444;
+    }
+
+    button.danger:hover {
+      background: #dc2626;
+    }
+
+    .whitelist-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .whitelist-item .info {
+      flex: 1;
+    }
+
+    .whitelist-item .phone {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .whitelist-item .name {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .booking-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: #f9fafb;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .booking-item .main {
+      flex: 1;
+    }
+
+    .booking-item .customer {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .booking-item .time {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .status {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status.pending { background: #fef3c7; color: #d97706; }
+    .status.confirmed { background: #d1fae5; color: #059669; }
+    .status.rejected { background: #fee2e2; color: #dc2626; }
+    .status.cancelled { background: #e5e7eb; color: #6b7280; }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .link-box {
+      background: #f0f9ff;
+      border: 2px dashed #0ea5e9;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .link-box h3 {
+      color: #0369a1;
+      margin-bottom: 15px;
+    }
+
+    .link-box .url {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 15px 0;
+      word-break: break-all;
+      color: #0369a1;
+      font-family: monospace;
+    }
+
+    .qrcode {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .qrcode img {
+      max-width: 200px;
+      border: 2px solid #e1e8ed;
+      border-radius: 8px;
+      padding: 10px;
+      background: white;
+    }
+
+    .lang-toggle {
+      background: #e1e8ed;
+      color: #333;
+      padding: 6px 12px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #9ca3af;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .modal-content h2 {
+      margin-bottom: 20px;
+    }
+
+    /* 社交媒体分享样式 */
+    .social-share {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 8px;
+    }
+
+    .social-share h3 {
+      margin-bottom: 15px;
+      color: #333;
+      font-size: 18px;
+    }
+
+    .social-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .social-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px;
+      background: white;
+      border: 2px solid #e1e8ed;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .social-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .social-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .social-btn span:not(.social-icon) {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    /* 平台特定颜色 */
+    .social-btn.facebook:hover {
+      border-color: #1877f2;
+      background: #f0f8ff;
+    }
+
+    .social-btn.twitter:hover {
+      border-color: #1da1f2;
+      background: #f0f8ff;
+    }
+
+    .social-btn.linkedin:hover {
+      border-color: #0077b5;
+      background: #f0f8ff;
+    }
+
+    .social-btn.whatsapp:hover {
+      border-color: #25d366;
+      background: #f0fff0;
+    }
+
+    .social-btn.copy:hover {
+      border-color: #4a90d9;
+      background: #f0f8ff;
+    }
+
+    /* 机构名称显示样式 */
+    .org-name-display {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 24px 0;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .org-name-display h3 {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 16px;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .org-name-content {
+      font-size: 28px;
+      font-weight: 600;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1 id="headerTitle">Admin Dashboard</h1>
+    <button class="lang-toggle" onclick="toggleLang()">中文</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('overview')" id="tabOverview">Overview</button>
+    <button class="tab" onclick="showTab('whitelist')" id="tabWhitelist">Whitelist</button>
+    <button class="tab" onclick="showTab('bookings')" id="tabBookings">Bookings</button>
+    <button class="tab" onclick="showTab('share')" id="tabShare">Share</button>
+  </div>
+
+  <div class="tab-content active" id="content-overview">
+    <div class="card">
+      <h2 id="studioInfo">Studio Information</h2>
+      <div id="tenantInfo"></div>
+    </div>
+
+    <div class="card">
+      <h2 id="pwdTitle">Change Password</h2>
+      <div class="form-group">
+        <label id="oldPwdLabel">Current Password</label>
+        <input type="password" id="oldPassword" placeholder="Enter current password">
+      </div>
+      <div class="form-group">
+        <label id="newPwdLabel">New Password</label>
+        <input type="password" id="newPassword" placeholder="Enter new password (min 6 characters)">
+      </div>
+      <div class="form-group">
+        <label id="confirmPwdLabel">Confirm New Password</label>
+        <input type="password" id="confirmPassword" placeholder="Re-enter new password">
+      </div>
+      <button onclick="changePassword()" id="btnChangePwd">Change Password</button>
+    </div>
+  </div>
+
+  <div class="tab-content" id="content-whitelist">
+    <div class="card">
+      <h2 id="addToWhitelist">Add Customer to Whitelist</h2>
+      <div class="form-group">
+        <label id="wlPhoneLabel">Customer Phone</label>
+        <input type="tel" id="wlPhone" placeholder="13800138000">
+      </div>
+      <div class="form-group">
+        <label id="wlNameLabel">Customer Name (Optional)</label>
+        <input type="text" id="wlName" placeholder="John Doe">
+      </div>
+      <button onclick="addWhitelist()" id="btnAddWhitelist">Add</button>
+    </div>
+
+    <div class="card">
+      <h2 id="whitelistTitle">Whitelist</h2>
+      <div id="whitelistList"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="content-bookings">
+    <div class="card">
+      <h2 id="bookingsTitle">Bookings</h2>
+      <div id="bookingsList"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="content-share">
+    <div class="card">
+      <h2 id="shareTitle">Share Studio</h2>
+      <p id="shareDesc" style="margin-bottom: 20px; color: #666;">
+        Share QR code or link to social media to reach more customers
+      </p>
+
+      <!-- 机构名称显示 -->
+      <div class="org-name-display" id="orgNameDisplay" style="display: none;">
+        <h3>🏢 Organization Name</h3>
+        <div class="org-name-content" id="orgNameContent"></div>
+      </div>
+
+      <div class="qrcode">
+        <h3>📱 Your QR Code</h3>
+        <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Customers scan to book</p>
+
+        <!-- 机构名称显示 -->
+        <div class="org-name-display" id="orgNameDisplay" style="display: none;">
+          <h3>🏢 机构名称</h3>
+          <div class="org-name-content" id="orgNameContent"></div>
+        </div>
+
+        <div style="text-align: center; margin: 15px 0;">
+          <img id="qrcode" src="" alt="二维码" style="max-width: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <!-- 机构名称标签 -->
+          <div id="orgNameLabel" style="display: none; margin-top: 15px; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; color: white; font-size: 16px; font-weight: 600;">
+            <span id="orgNameText"></span>
+          </div>
+        </div>
+        <button onclick="downloadQRCode()" style="margin-top: 10px;" id="btnDownloadQR">💾 Download QR</button>
+      </div>
+
+      <!-- 社交媒体分享 -->
+      <div class="social-share">
+        <h3>📤 分享到社交媒体</h3>
+        <p style="font-size: 12px; color: #666; margin-bottom: 15px;">点击下方平台分享预约链接</p>
+        <div class="social-buttons">
+          <button class="social-btn facebook" onclick="shareToFacebook()">
+            <span class="social-icon">📘</span>
+            <span>Facebook</span>
+          </button>
+          <button class="social-btn twitter" onclick="shareToTwitter()">
+            <span class="social-icon">🐦</span>
+            <span>Twitter</span>
+          </button>
+          <button class="social-btn linkedin" onclick="shareToLinkedIn()">
+            <span class="social-icon">💼</span>
+            <span>LinkedIn</span>
+          </button>
+          <button class="social-btn whatsapp" onclick="shareToWhatsApp()">
+            <span class="social-icon">💬</span>
+            <span>WhatsApp</span>
+          </button>
+          <button class="social-btn copy-link" onclick="copyBookingLink()">
+            <span class="social-icon">🔗</span>
+            <span>复制链接</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <h2 id="loginTitle">Admin Login</h2>
+      <div class="form-group">
+        <label id="loginNameLabel">Studio Name</label>
+        <input type="text" id="loginName" placeholder="Enter studio name">
+      </div>
+      <div class="form-group">
+        <label id="loginPwdLabel">Admin Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter admin password">
+      </div>
+      <button onclick="doLogin()" id="btnLogin">Login</button>
+      <button class="secondary" onclick="closeLoginModal()" style="margin-top: 10px;" id="btnCancel">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://booking-api.billyli198841.workers.dev';
+    let lang = 'en';
+    let currentTenant = null;
+    let isLoggedIn = false;
+    let tenantId = null;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    tenantId = urlParams.get('id');
+
+    const translations = {
+      zh: {
+        headerTitle: '管理后台',
+        tabOverview: '概览',
+        tabWhitelist: '白名单',
+        tabBookings: '预约',
+        tabShare: '分享',
+        studioInfo: '工作室信息',
+        pwdTitle: '修改密码',
+        oldPwdLabel: '原密码',
+        newPwdLabel: '新密码',
+        confirmPwdLabel: '确认新密码',
+        btnChangePwd: '修改密码',
+        addToWhitelist: '添加客户到白名单',
+        wlPhoneLabel: '客户手机号',
+        wlNameLabel: '客户姓名（选填）',
+        btnAddWhitelist: '添加',
+        whitelistTitle: '白名单列表',
+        bookingsTitle: '预约记录',
+        shareTitle: '分享工作室',
+        shareDesc: '将下面的链接或二维码发送给您的客户，他们就可以预约了',
+        btnCopy: '复制链接',
+        btnDownloadQR: '下载二维码',
+        loginTitle: '管理员登录',
+        loginNameLabel: '工作室名称',
+        loginPwdLabel: '管理密码',
+        btnLogin: '登录',
+        btnCancel: '取消',
+        type: '类型',
+        coach: '专家/教练',
+        venue: '场地',
+        address: '地址',
+        phone: '电话',
+        description: '简介',
+        emptyWhitelist: '暂无白名单客户',
+        emptyBookings: '暂无预约记录',
+        statusPending: '待审核',
+        statusConfirmed: '已确认',
+        statusRejected: '已拒绝',
+        statusCancelled: '已取消',
+        btnConfirm: '确认',
+        btnReject: '拒绝',
+        btnRemove: '移除',
+        copied: '已复制！',
+        confirmDelete: '确认删除？'
+      },
+      en: {
+        headerTitle: 'Admin Dashboard',
+        tabOverview: 'Overview',
+        tabWhitelist: 'Whitelist',
+        tabBookings: 'Bookings',
+        tabShare: 'Share',
+        studioInfo: 'Studio Info',
+        pwdTitle: 'Change Password',
+        oldPwdLabel: 'Current Password',
+        newPwdLabel: 'New Password',
+        confirmPwdLabel: 'Confirm New Password',
+        btnChangePwd: 'Change Password',
+        addToWhitelist: 'Add Customer to Whitelist',
+        wlPhoneLabel: 'Customer Phone',
+        wlNameLabel: 'Customer Name (optional)',
+        btnAddWhitelist: 'Add',
+        whitelistTitle: 'Whitelist',
+        bookingsTitle: 'Bookings',
+        shareTitle: 'Share Studio',
+        shareDesc: 'Send the link or QR code to your customers for booking',
+        btnCopy: 'Copy Link',
+        btnDownloadQR: 'Download QR',
+        loginTitle: 'Admin Login',
+        loginNameLabel: 'Studio Name',
+        loginPwdLabel: 'Admin Password',
+        btnLogin: 'Login',
+        btnCancel: 'Cancel',
+        type: 'Type',
+        coach: 'Expert/Coach',
+        venue: 'Venue',
+        address: 'Address',
+        phone: 'Phone',
+        description: 'Description',
+        emptyWhitelist: 'No whitelist customers',
+        emptyBookings: 'No bookings yet',
+        statusPending: 'Pending',
+        statusConfirmed: 'Confirmed',
+        statusRejected: 'Rejected',
+        statusCancelled: 'Cancelled',
+        btnConfirm: 'Confirm',
+        btnReject: 'Reject',
+        btnRemove: 'Remove',
+        copied: 'Copied!',
+        confirmDelete: 'Confirm delete?'
+      }
+    };
+
+    function toggleLang() {
+      lang = lang === 'zh' ? 'en' : 'zh';
+      updateUIText();
+      document.querySelector('.lang-toggle').textContent = lang === 'zh' ? 'EN' : '中文';
+      loadData();
+    }
+
+    function updateUIText() {
+      const t = translations[lang];
+      document.getElementById('headerTitle').textContent = t.headerTitle;
+      document.getElementById('tabOverview').textContent = t.tabOverview;
+      document.getElementById('tabWhitelist').textContent = t.tabWhitelist;
+      document.getElementById('tabBookings').textContent = t.tabBookings;
+      document.getElementById('tabShare').textContent = t.tabShare;
+      document.getElementById('studioInfo').textContent = t.studioInfo;
+      document.getElementById('pwdTitle').textContent = t.pwdTitle;
+      document.getElementById('oldPwdLabel').textContent = t.oldPwdLabel;
+      document.getElementById('newPwdLabel').textContent = t.newPwdLabel;
+      document.getElementById('confirmPwdLabel').textContent = t.confirmPwdLabel;
+      document.getElementById('btnChangePwd').textContent = t.btnChangePwd;
+      document.getElementById('addToWhitelist').textContent = t.addToWhitelist;
+      document.getElementById('wlPhoneLabel').textContent = t.wlPhoneLabel;
+      document.getElementById('wlNameLabel').textContent = t.wlNameLabel;
+      document.getElementById('btnAddWhitelist').textContent = t.btnAddWhitelist;
+      document.getElementById('whitelistTitle').textContent = t.whitelistTitle;
+      document.getElementById('bookingsTitle').textContent = t.bookingsTitle;
+      document.getElementById('shareTitle').textContent = t.shareTitle;
+      document.getElementById('shareDesc').textContent = t.shareDesc;
+      document.getElementById('btnCopy').textContent = t.btnCopy;
+      document.getElementById('btnDownloadQR').textContent = t.btnDownloadQR;
+      document.getElementById('loginTitle').textContent = t.loginTitle;
+      document.getElementById('loginNameLabel').textContent = t.loginNameLabel;
+      document.getElementById('loginPwdLabel').textContent = t.loginPwdLabel;
+      document.getElementById('btnLogin').textContent = t.btnLogin;
+      document.getElementById('btnCancel').textContent = t.btnCancel;
+    }
+
+    function showTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      document.querySelector(`.tab[onclick="showTab('${tab}')"]`).classList.add('active');
+      document.getElementById(`content-${tab}`).classList.add('active');
+
+      if (!isLoggedIn) {
+        document.getElementById('loginModal').classList.add('show');
+        return;
+      }
+
+      if (tab === 'overview') loadData();
+      if (tab === 'whitelist') loadWhitelist();
+      if (tab === 'bookings') loadBookings();
+      if (tab === 'share') loadData();
+    }
+
+    async function doLogin() {
+      const name = document.getElementById('loginName').value;
+      const password = document.getElementById('loginPassword').value;
+      if (!name || !password) {
+        alert('请输入工作室名称和密码');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, password })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          isLoggedIn = true;
+          currentTenant = result.tenant;
+          tenantId = currentTenant.id;
+
+          // 记住密码
+          localStorage.setItem('adminCredentials', JSON.stringify({ name, password }));
+
+          closeLoginModal();
+          loadData();
+        } else {
+          alert(result.error || 'Login failed');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Network error');
+      }
+    }
+
+    function closeLoginModal() {
+      document.getElementById('loginModal').classList.remove('show');
+    }
+
+    async function loadData() {
+      if (!currentTenant) return;
+
+      // 加载工作室信息
+      const t = translations[lang];
+      const infoHtml = `
+        <p><strong>${t.type}:</strong> ${currentTenant.type === 'coach' ? t.coach : t.venue}</p>
+        <p><strong>${translations.zh.name}:</strong> ${currentTenant.name}</p>
+        <p><strong>${t.phone}:</strong> ${currentTenant.phone || '-'}</p>
+        ${currentTenant.address ? `<p><strong>${t.address}:</strong> ${currentTenant.address}</p>` : ''}
+        ${currentTenant.description ? `<p><strong>${t.description}:</strong> ${currentTenant.description}</p>` : ''}
+      `;
+      document.getElementById('tenantInfo').innerHTML = infoHtml;
+
+      // 显示机构名称
+      const orgNameDisplay = document.getElementById('orgNameDisplay');
+      const orgNameContent = document.getElementById('orgNameContent');
+      if (orgNameDisplay && orgNameContent) {
+        orgNameDisplay.style.display = 'block';
+        orgNameContent.innerHTML = `
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px 20px; border-radius: 8px; color: white; text-align: center; font-size: 18px; font-weight: 600;">
+            ${currentTenant.name}
+          </div>
+        `;
+      }
+
+      // 生成小程序码
+      try {
+        const qrResponse = await fetch(`${API_BASE}/api/wechat/qrcode?tenantId=${encodeURIComponent(tenantId)}&page=pages/booking/booking`);
+        if (qrResponse.ok) {
+          const blob = await qrResponse.blob();
+          const qrUrl = URL.createObjectURL(blob);
+          document.getElementById('qrcode').src = qrUrl;
+
+          // 显示机构名称标签
+          const orgNameLabel = document.getElementById('orgNameLabel');
+          const orgNameText = document.getElementById('orgNameText');
+          if (orgNameLabel && orgNameText && currentTenant.name) {
+            orgNameLabel.style.display = 'block';
+            orgNameText.textContent = currentTenant.name;
+          }
+        } else {
+          // 如果后端API失败，显示错误信息
+          console.error('生成小程序码失败');
+          document.getElementById('qrcode').alt = '小程序码生成失败，请稍后重试';
+        }
+      } catch (err) {
+        console.error('加载小程序码失败:', err);
+        document.getElementById('qrcode').alt = '小程序码加载失败，请检查网络连接';
+      }
+    }
+
+    async function loadWhitelist() {
+      try {
+        const response = await fetch(`${API_BASE}/api/whitelist?tenantId=${tenantId}`);
+        const result = await response.json();
+
+        if (result.success) {
+          const t = translations[lang];
+          if (result.whitelist.length === 0) {
+            document.getElementById('whitelistList').innerHTML = `<div class="empty-state">${t.emptyWhitelist}</div>`;
+            return;
+          }
+
+          document.getElementById('whitelistList').innerHTML = result.whitelist.map(item => `
+            <div class="whitelist-item">
+              <div class="info">
+                <div class="phone">${item.customer_phone}</div>
+                <div class="name">${item.customer_name || '-'}</div>
+              </div>
+              <button class="danger" onclick="removeWhitelist('${item.customer_phone}')">${t.btnRemove}</button>
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function addWhitelist() {
+      const phone = document.getElementById('wlPhone').value;
+      const name = document.getElementById('wlName').value;
+
+      if (!phone) {
+        alert('请输入手机号');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/api/whitelist`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tenantId, customer_phone: phone, customer_name: name })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          document.getElementById('wlPhone').value = '';
+          document.getElementById('wlName').value = '';
+          loadWhitelist();
+        } else {
+          alert(result.error || '添加失败');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('网络错误');
+      }
+    }
+
+    async function removeWhitelist(phone) {
+      if (!confirm(translations[lang].confirmDelete)) return;
+
+      try {
+        const response = await fetch(`${API_BASE}/api/whitelist/${phone}`, {
+          method: 'DELETE'
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          loadWhitelist();
+        } else {
+          alert(result.error || '删除失败');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('网络错误');
+      }
+    }
+
+    async function loadBookings() {
+      try {
+        const response = await fetch(`${API_BASE}/api/bookings?tenantId=${tenantId}`);
+        const result = await response.json();
+
+        if (result.success) {
+          const t = translations[lang];
+          if (result.bookings.length === 0) {
+            document.getElementById('bookingsList').innerHTML = `<div class="empty-state">${t.emptyBookings}</div>`;
+            return;
+          }
+
+          document.getElementById('bookingsList').innerHTML = result.bookings.map(b => `
+            <div class="booking-item">
+              <div class="main">
+                <div class="customer">${b.customer_name || b.customer_phone}</div>
+                <div class="time">${b.date} ${b.time_label}</div>
+              </div>
+              <div class="status ${b.status}">${t['status' + b.status.charAt(0).toUpperCase() + b.status.slice(1)] || b.status}</div>
+              ${b.status === 'pending' ? `
+                <div class="actions">
+                  <button onclick="updateBooking(${b.id}, 'confirmed')">${t.btnConfirm}</button>
+                  <button class="danger" onclick="updateBooking(${b.id}, 'rejected')">${t.btnReject}</button>
+                </div>
+              ` : ''}
+            </div>
+          `).join('');
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function updateBooking(bookingId, status) {
+      try {
+        const response = await fetch(`${API_BASE}/api/bookings/${bookingId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          loadBookings();
+        } else {
+          alert(result.error || '操作失败');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('网络错误');
+      }
+    }
+
+    async function downloadQRCode() {
+      try {
+        const img = document.getElementById('qrcode');
+
+        // 如果是blob URL（从后端API获取的小程序码），直接下载
+        if (img.src && img.src.startsWith('blob:')) {
+          const link = document.createElement('a');
+          link.href = img.src;
+          link.download = `小程序码-${currentTenant.name || tenantId}.png`;
+          link.click();
+          return;
+        }
+
+        // 如果是普通URL，尝试fetch下载
+        if (img.src) {
+          const response = await fetch(img.src);
+
+          if (!response.ok) {
+            throw new Error('网络响应失败');
+          }
+
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `二维码-${currentTenant.name || tenantId}.png`;
+          link.click();
+          window.URL.revokeObjectURL(url);
+
+          alert('✓ 下载成功！');
+        }
+      } catch (err) {
+        console.error('下载失败:', err);
+        alert('下载失败，请尝试以下方法：\n\n1. 右键点击二维码图片\n2. 选择"图片另存为"\n3. 保存到本地');
+      }
+    }
+
+    async function changePassword() {
+      const oldPassword = document.getElementById('oldPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (!oldPassword || !newPassword || !confirmPassword) {
+        alert('请填写所有字段');
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        alert('新密码长度至少6位');
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        alert('两次输入的密码不一致');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/api/tenants/${tenantId}/change-password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            oldPassword,
+            newPassword
+          })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          alert('✓ 密码修改成功，请重新登录');
+          // 清空表单
+          document.getElementById('oldPassword').value = '';
+          document.getElementById('newPassword').value = '';
+          document.getElementById('confirmPassword').value = '';
+          // 退出登录
+          isLoggedIn = false;
+          currentTenant = null;
+          showTab('overview');
+        } else {
+          alert(result.error || '密码修改失败');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('网络错误');
+      }
+    }
+
+    // 社交媒体分享函数
+    function getBookingLink() {
+      if (!currentTenant || !currentTenant.name) return '#';
+      // 使用生产域名
+      return `https://booking.runorb.org/booking.html?tenant=${tenantId}`;
+    }
+
+    function getShareText() {
+      const name = currentTenant ? currentTenant.name : '我们';
+      const type = currentTenant && currentTenant.type === 'coach' ? '专家' : '场地';
+      return `🎉 预约${name}（${type}）- 专业服务，在线预约，方便快捷！`;
+    }
+
+    function copyBookingLink() {
+      const link = getBookingLink();
+      navigator.clipboard.writeText(link).then(() => {
+        const btn = event.target.closest('.social-btn');
+        const originalText = btn.querySelector('span:last-child').textContent;
+        btn.querySelector('span:last-child').textContent = '已复制!';
+        setTimeout(() => btn.querySelector('span:last-child').textContent = originalText, 2000);
+      }).catch(() => {
+        // 显示更友好的提示，告诉用户要复制什么链接
+        const linkToShow = link;
+        alert(`自动复制失败，请手动复制以下链接：\n\n${linkToShow}`);
+        // 尝试再次复制（有些浏览器需要用户交互后才能复制）
+        navigator.clipboard.writeText(link);
+      });
+    }
+
+    function shareToFacebook() {
+      const link = encodeURIComponent(getBookingLink());
+      const text = encodeURIComponent(getShareText());
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${link}&quote=${text}`, '_blank');
+    }
+
+    function shareToTwitter() {
+      const link = encodeURIComponent(getBookingLink());
+      const text = encodeURIComponent(getShareText());
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${link}`, '_blank');
+    }
+
+    function shareToLinkedIn() {
+      const link = encodeURIComponent(getBookingLink());
+      const text = encodeURIComponent(getShareText());
+      window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${link}&title=${text}`, '_blank');
+    }
+
+    function shareToWhatsApp() {
+      const link = encodeURIComponent(getBookingLink());
+      const text = encodeURIComponent(getShareText());
+      window.open(`https://wa.me/?text=${text}%20${link}`, '_blank');
+    }
+
+    // 初始化
+    // 自动填充记住的密码
+    const savedCredentials = localStorage.getItem('adminCredentials');
+    if (savedCredentials) {
+      try {
+        const { name, password } = JSON.parse(savedCredentials);
+        if (name && password) {
+          document.getElementById('loginName').value = name;
+          document.getElementById('loginPassword').value = password;
+          // 自动登录
+          doLogin();
+        }
+      } catch (e) {
+        console.error('Failed to parse saved credentials', e);
+      }
+    }
+
+    // 如果没有 tenantId 且没有保存的凭据，显示登录弹窗
+    if (!tenantId && !savedCredentials) {
+      document.getElementById('loginModal').classList.add('show');
+    } else if (tenantId) {
+      // 如果有 tenantId，直接加载数据（从分享链接进入）
+      loadTenantById(tenantId);
+    }
+
+    async function loadTenantById(id) {
+      try {
+        const response = await fetch(`${API_BASE}/api/tenants/${id}`);
+        const result = await response.json();
+        if (result.success) {
+          currentTenant = result.tenant;
+          isLoggedIn = true;
+          loadData();
+        } else {
+          alert(result.error || '加载失败');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('网络错误');
+      }
+    }
+
+    // 初始化：页面加载时设置默认语言文本
+    updateUIText();
+  </script>
+</body>
+</html>

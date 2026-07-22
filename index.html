@@ -176,47 +176,20 @@
     </div>
 
     <div class="action-section">
-      <div class="action-card" onclick="goRegister('coach')">
+      <div class="action-card" onclick="goAdmin()">
+        <div class="action-icon">👨‍💼</div>
+        <div class="action-info">
+          <span class="action-name" id="adminTitle">Admin</span>
+          <span class="action-desc" id="adminDesc">Administrator and venue management</span>
+        </div>
+        <span class="action-arrow">›</span>
+      </div>
+
+      <div class="action-card" onclick="goUser()">
         <div class="action-icon">👤</div>
         <div class="action-info">
-          <span class="action-name" id="coachTitle">Expert Registration</span>
-          <span class="action-desc" id="coachDesc">Coaches, consultants, therapists registration</span>
-        </div>
-        <span class="action-arrow">›</span>
-      </div>
-
-      <div class="action-card" onclick="goRegister('venue')">
-        <div class="action-icon">🏟️</div>
-        <div class="action-info">
-          <span class="action-name" id="venueTitle">Venue Registration</span>
-          <span class="action-desc" id="venueDesc">Golf courses, dance studios, workshops</span>
-        </div>
-        <span class="action-arrow">›</span>
-      </div>
-
-      <div class="action-card" onclick="goBrowse()">
-        <div class="action-icon">🔍</div>
-        <div class="action-info">
-          <span class="action-name" id="browseTitle">Browse Bookings</span>
-          <span class="action-desc" id="browseDesc">View all experts and venues</span>
-        </div>
-        <span class="action-arrow">›</span>
-      </div>
-
-      <div class="action-card" onclick="goAdminLogin()">
-        <div class="action-icon">📋</div>
-        <div class="action-info">
-          <span class="action-name" id="adminTitle">Admin Login</span>
-          <span class="action-desc" id="adminDesc">Manage your studio</span>
-        </div>
-        <span class="action-arrow">›</span>
-      </div>
-
-      <div class="action-card" onclick="goSuperAdmin()">
-        <div class="action-icon">🔐</div>
-        <div class="action-info">
-          <span class="action-name" id="superAdminTitle">Super Admin</span>
-          <span class="action-desc" id="superAdminDesc">Approve registrations</span>
+          <span class="action-name" id="userTitle">User</span>
+          <span class="action-desc" id="userDesc">Book appointments and services</span>
         </div>
         <span class="action-arrow">›</span>
       </div>
@@ -234,31 +207,19 @@
       zh: {
         heroTitle: '预约助手',
         heroDesc: '专业预约管理平台',
-        coachTitle: '专家入驻',
-        coachDesc: '教练、顾问、治疗师等入驻',
-        venueTitle: '场地入驻',
-        venueDesc: '球场、舞蹈室、工作室入驻',
-        browseTitle: '浏览预约',
-        browseDesc: '查看所有专家和场地',
-        adminTitle: '管理员登录',
-        adminDesc: '管理您的工作室',
-        superAdminTitle: '超级管理员',
-        superAdminDesc: '审批入驻申请',
+        adminTitle: '管理者',
+        adminDesc: '管理员和场地管理',
+        userTitle: '用户',
+        userDesc: '预约服务和管理',
         privacyLink: '隐私政策'
       },
       en: {
         heroTitle: 'Booking Assistant',
         heroDesc: 'Professional Booking Management Platform',
-        coachTitle: 'Expert Registration',
-        coachDesc: 'Coaches, consultants, therapists registration',
-        venueTitle: 'Venue Registration',
-        venueDesc: 'Golf courses, dance studios, workshops',
-        browseTitle: 'Browse Bookings',
-        browseDesc: 'View all experts and venues',
-        adminTitle: 'Admin Login',
-        adminDesc: 'Manage your studio',
-        superAdminTitle: 'Super Admin',
-        superAdminDesc: 'Approve registrations',
+        adminTitle: 'Admin',
+        adminDesc: 'Administrator and venue management',
+        userTitle: 'User',
+        userDesc: 'Book appointments and services',
         privacyLink: 'Privacy Policy'
       }
     };
@@ -273,31 +234,19 @@
       const t = translations[lang];
       document.getElementById('heroTitle').textContent = t.heroTitle;
       document.getElementById('heroDesc').textContent = t.heroDesc;
-      document.getElementById('coachTitle').textContent = t.coachTitle;
-      document.getElementById('coachDesc').textContent = t.coachDesc;
-      document.getElementById('venueTitle').textContent = t.venueTitle;
-      document.getElementById('venueDesc').textContent = t.venueDesc;
-      document.getElementById('browseTitle').textContent = t.browseTitle;
-      document.getElementById('browseDesc').textContent = t.browseDesc;
       document.getElementById('adminTitle').textContent = t.adminTitle;
       document.getElementById('adminDesc').textContent = t.adminDesc;
+      document.getElementById('userTitle').textContent = t.userTitle;
+      document.getElementById('userDesc').textContent = t.userDesc;
       document.getElementById('privacyLink').textContent = t.privacyLink;
     }
 
-    function goRegister(type) {
-      window.location.href = `register.html?type=${type}`;
-    }
-
-    function goBrowse() {
-      window.location.href = 'browse.html';
-    }
-
-    function goAdminLogin() {
+    function goAdmin() {
       window.location.href = 'admin.html';
     }
 
-    function goSuperAdmin() {
-      window.location.href = 'super-admin.html';
+    function goUser() {
+      window.location.href = 'user.html';
     }
 
     function showPrivacy() {

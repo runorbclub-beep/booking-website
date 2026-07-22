@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User - Booking Assistant</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding-top: 60px;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+    }
+
+    .header-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+    }
+
+    .lang-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+    }
+
+    .form-section {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-title {
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: border 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .error-message {
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      color: #dc2626;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .org-info {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .org-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .org-desc {
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <button class="back-btn" onclick="goBack()">← Back</button>
+  <button class="lang-toggle" onclick="toggleLang()">中文</button>
+
+  <div class="container">
+    <div class="header">
+      <div class="header-icon">👤</div>
+      <h1 id="pageTitle">User Portal</h1>
+      <p id="pageDesc">Book appointments and services</p>
+    </div>
+
+    <!-- Initial Form: Nickname and Phone -->
+    <div class="form-section" id="initialSection">
+      <h2 class="form-title" id="formTitle">Enter Your Information</h2>
+      <div id="error" class="error-message hidden"></div>
+
+      <form onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label for="nickname" id="nicknameLabel">Nickname</label>
+          <input type="text" id="nickname" required>
+          <div class="hint" id="nicknameHint">Your display name</div>
+        </div>
+
+        <div class="form-group">
+          <label for="phone" id="phoneLabel">Phone Number</label>
+          <input type="tel" id="phone" required>
+          <div class="hint" id="phoneHint">For booking confirmation</div>
+        </div>
+
+        <button type="submit" class="btn" id="continueBtn">Continue</button>
+      </form>
+    </div>
+
+    <!-- Organization List -->
+    <div class="form-section hidden" id="orgListSection">
+      <h2 class="form-title" id="selectOrgTitle">Select Organization</h2>
+
+      <div id="orgList"></div>
+
+      <button class="btn" onclick="goBack()" id="backBtn">Back</button>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://booking-api.billyli198841.workers.dev';
+    let lang = 'en';
+    let userInfo = null;
+
+    const translations = {
+      zh: {
+        pageTitle: '用户入口',
+        pageDesc: '预约服务和管理',
+        formTitle: '输入您的信息',
+        nicknameLabel: '昵称',
+        nicknameHint: '您的显示名称',
+        phoneLabel: '电话号码',
+        phoneHint: '用于预约确认',
+        continueBtn: '继续',
+        selectOrgTitle: '选择机构',
+        backBtn: '返回',
+        errorNotInWhitelist: '预约失败：您不在预约白名单中',
+        errorContactAdmin: '请联系您的机构管理员',
+        errorNetwork: '网络错误，请稍后重试'
+      },
+      en: {
+        pageTitle: 'User Portal',
+        pageDesc: 'Book appointments and services',
+        formTitle: 'Enter Your Information',
+        nicknameLabel: 'Nickname',
+        nicknameHint: 'Your display name',
+        phoneLabel: 'Phone Number',
+        phoneHint: 'For booking confirmation',
+        continueBtn: 'Continue',
+        selectOrgTitle: 'Select Organization',
+        backBtn: 'Back',
+        errorNotInWhitelist: 'Booking failed: You are not in the whitelist',
+        errorContactAdmin: 'Please contact your organization administrator',
+        errorNetwork: 'Network error, please try again later'
+      }
+    };
+
+    function toggleLang() {
+      lang = lang === 'zh' ? 'en' : 'zh';
+      updateText();
+    }
+
+    function updateText() {
+      const t = translations[lang];
+      document.getElementById('pageTitle').textContent = t.pageTitle;
+      document.getElementById('pageDesc').textContent = t.pageDesc;
+      document.getElementById('formTitle').textContent = t.formTitle;
+      document.getElementById('nicknameLabel').textContent = t.nicknameLabel;
+      document.getElementById('nicknameHint').textContent = t.nicknameHint;
+      document.getElementById('phoneLabel').textContent = t.phoneLabel;
+      document.getElementById('phoneHint').textContent = t.phoneHint;
+      document.getElementById('continueBtn').textContent = t.continueBtn;
+      document.getElementById('selectOrgTitle').textContent = t.selectOrgTitle;
+      document.getElementById('backBtn').textContent = t.backBtn;
+      document.querySelector('.lang-toggle').textContent = lang === 'zh' ? 'EN' : '中文';
+    }
+
+    function showError(message) {
+      const errorEl = document.getElementById('error');
+      const t = translations[lang];
+
+      errorEl.innerHTML = `
+        <div>${message}</div>
+        <div style="margin-top: 10px; font-weight: 600;">${t.errorContactAdmin}</div>
+      `;
+      errorEl.classList.remove('hidden');
+    }
+
+    function hideError() {
+      document.getElementById('error').classList.add('hidden');
+    }
+
+    async function handleSubmit(event) {
+      event.preventDefault();
+      hideError();
+
+      const nickname = document.getElementById('nickname').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+
+      userInfo = { nickname, phone };
+
+      try {
+        // Get all active organizations
+        const response = await fetch(`${API_BASE}/api/tenants?status=active`);
+        const result = await response.json();
+
+        if (result.success && result.tenants && result.tenants.length > 0) {
+          // Show organization list
+          showOrgList(result.tenants);
+        } else {
+          showError(translations[lang].errorNotInWhitelist);
+        }
+      } catch (error) {
+        showError(translations[lang].errorNetwork);
+      }
+    }
+
+    function showOrgList(tenants) {
+      const orgListEl = document.getElementById('orgList');
+      orgListEl.innerHTML = '';
+
+      tenants.forEach(tenant => {
+        const orgCard = document.createElement('div');
+        orgCard.className = 'org-info';
+        orgCard.style.cursor = 'pointer';
+        orgCard.innerHTML = `
+          <div class="org-name">${tenant.name}</div>
+          <div class="org-desc">${tenant.type === 'coach' ? 'Expert/Coach' : 'Venue'}</div>
+        `;
+        orgCard.onclick = () => selectOrg(tenant);
+        orgListEl.appendChild(orgCard);
+      });
+
+      document.getElementById('initialSection').classList.add('hidden');
+      document.getElementById('orgListSection').classList.remove('hidden');
+    }
+
+    function selectOrg(tenant) {
+      // Store user info and redirect to booking page
+      sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+      sessionStorage.setItem('selectedTenant', JSON.stringify(tenant));
+      window.location.href = `booking.html?tenant=${tenant.id}&user=${encodeURIComponent(JSON.stringify(userInfo))}`;
+    }
+
+    function goBack() {
+      window.location.href = 'index.html';
+    }
+
+    // Initialize
+    updateText();
+  </script>
+</body>
+</html>
