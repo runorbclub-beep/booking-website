@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>霸族预约助手</title>
-  <meta name="description" content="专业预约管理平台 - 专家、场地预约管理">
+  <title>Booking Assistant</title>
+  <meta name="description" content="Professional Booking Management Platform - Expert and Venue Booking">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
   <style>
@@ -166,21 +166,21 @@
   </style>
 </head>
 <body>
-  <button class="lang-toggle" onclick="toggleLang()">EN</button>
+  <button class="lang-toggle" onclick="toggleLang()">中文</button>
 
   <div class="container">
     <div class="hero">
       <div class="hero-icon">📅</div>
-      <text class="hero-title" id="heroTitle">预约助手</text>
-      <text class="hero-desc" id="heroDesc">专业预约管理平台</text>
+      <text class="hero-title" id="heroTitle">Booking Assistant</text>
+      <text class="hero-desc" id="heroDesc">Professional Booking Management Platform</text>
     </div>
 
     <div class="action-section">
       <div class="action-card" onclick="goRegister('coach')">
         <div class="action-icon">👤</div>
         <div class="action-info">
-          <span class="action-name" id="coachTitle">专家入驻</span>
-          <span class="action-desc" id="coachDesc">教练、顾问、治疗师等入驻</span>
+          <span class="action-name" id="coachTitle">Expert Registration</span>
+          <span class="action-desc" id="coachDesc">Coaches, consultants, therapists registration</span>
         </div>
         <span class="action-arrow">›</span>
       </div>
@@ -188,8 +188,8 @@
       <div class="action-card" onclick="goRegister('venue')">
         <div class="action-icon">🏟️</div>
         <div class="action-info">
-          <span class="action-name" id="venueTitle">场地入驻</span>
-          <span class="action-desc" id="venueDesc">球场、舞蹈室、工作室入驻</span>
+          <span class="action-name" id="venueTitle">Venue Registration</span>
+          <span class="action-desc" id="venueDesc">Golf courses, dance studios, workshops</span>
         </div>
         <span class="action-arrow">›</span>
       </div>
@@ -197,8 +197,8 @@
       <div class="action-card" onclick="goBrowse()">
         <div class="action-icon">🔍</div>
         <div class="action-info">
-          <span class="action-name" id="browseTitle">浏览预约</span>
-          <span class="action-desc" id="browseDesc">查看所有专家和场地</span>
+          <span class="action-name" id="browseTitle">Browse Bookings</span>
+          <span class="action-desc" id="browseDesc">View all experts and venues</span>
         </div>
         <span class="action-arrow">›</span>
       </div>
@@ -206,8 +206,8 @@
       <div class="action-card" onclick="goAdminLogin()">
         <div class="action-icon">📋</div>
         <div class="action-info">
-          <span class="action-name" id="adminTitle">管理员登录</span>
-          <span class="action-desc" id="adminDesc">管理您的工作室</span>
+          <span class="action-name" id="adminTitle">Admin Login</span>
+          <span class="action-desc" id="adminDesc">Manage your studio</span>
         </div>
         <span class="action-arrow">›</span>
       </div>
@@ -215,20 +215,20 @@
       <div class="action-card" onclick="goSuperAdmin()">
         <div class="action-icon">🔐</div>
         <div class="action-info">
-          <span class="action-name" id="superAdminTitle">超级管理员</span>
-          <span class="action-desc" id="superAdminDesc">审批入驻申请</span>
+          <span class="action-name" id="superAdminTitle">Super Admin</span>
+          <span class="action-desc" id="superAdminDesc">Approve registrations</span>
         </div>
         <span class="action-arrow">›</span>
       </div>
     </div>
 
     <div class="bottom-links">
-      <a class="link-btn" onclick="showPrivacy()" id="privacyLink">隐私政策</a>
+      <a class="link-btn" onclick="showPrivacy()" id="privacyLink">Privacy Policy</a>
     </div>
   </div>
 
   <script>
-    let lang = 'zh';
+    let lang = 'en';
 
     const translations = {
       zh: {
@@ -303,6 +303,9 @@
     function showPrivacy() {
       alert('隐私政策\n\n我们收集您的昵称和手机号码用于预约服务。我们承诺不会将您的个人信息用于其他用途或分享给第三方。');
     }
+
+    // 初始化：页面加载时设置默认语言文本
+    updateText();
   </script>
 </body>
 </html>

@@ -220,7 +220,7 @@
   </style>
 </head>
 <body>
-  <button class="lang-toggle" onclick="toggleLang()">EN</button>
+  <button class="lang-toggle" onclick="toggleLang()">中文</button>
 
   <div class="header">
     <button class="back-btn" onclick="goBack()">← 返回首页</button>
@@ -247,7 +247,7 @@
 
   <script>
     const API_BASE = 'https://booking-api.billyli198841.workers.dev';
-    let lang = 'zh';
+    let lang = 'en';
     let mode = 'coach';
     let tenants = [];
     let filteredTenants = [];
@@ -380,6 +380,9 @@
     function goBooking(tenantId) {
       window.location.href = `booking.html?tenant=${tenantId}`;
     }
+
+    // 初始化：页面加载时设置默认语言文本
+    updateText();
 
     // 初始化
     loadTenants();

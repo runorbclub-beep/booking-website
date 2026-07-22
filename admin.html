@@ -379,7 +379,7 @@
 <body>
   <div class="header">
     <h1 id="headerTitle">管理后台</h1>
-    <button class="lang-toggle" onclick="toggleLang()">EN</button>
+    <button class="lang-toggle" onclick="toggleLang()">中文</button>
   </div>
 
   <div class="tabs">
@@ -456,8 +456,19 @@
       <div class="qrcode">
         <h3>📱 您的二维码</h3>
         <p style="font-size: 12px; color: #666; margin-bottom: 10px;">客户扫描小程序码即可预约</p>
+
+        <!-- 机构名称显示 -->
+        <div class="org-name-display" id="orgNameDisplay" style="display: none;">
+          <h3>🏢 机构名称</h3>
+          <div class="org-name-content" id="orgNameContent"></div>
+        </div>
+
         <div style="text-align: center; margin: 15px 0;">
           <img id="qrcode" src="" alt="二维码" style="max-width: 200px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <!-- 机构名称标签 -->
+          <div id="orgNameLabel" style="display: none; margin-top: 15px; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; color: white; font-size: 16px; font-weight: 600;">
+            <span id="orgNameText"></span>
+          </div>
         </div>
         <button onclick="downloadQRCode()" style="margin-top: 10px;" id="btnDownloadQR">💾 下载二维码</button>
       </div>
@@ -510,7 +521,7 @@
 
   <script>
     const API_BASE = 'https://booking-api.billyli198841.workers.dev';
-    let lang = 'zh';
+    let lang = 'en';
     let currentTenant = null;
     let isLoggedIn = false;
     let tenantId = null;
@@ -720,6 +731,14 @@
           const blob = await qrResponse.blob();
           const qrUrl = URL.createObjectURL(blob);
           document.getElementById('qrcode').src = qrUrl;
+
+          // 显示机构名称标签
+          const orgNameLabel = document.getElementById('orgNameLabel');
+          const orgNameText = document.getElementById('orgNameText');
+          if (orgNameLabel && orgNameText && currentTenant.name) {
+            orgNameLabel.style.display = 'block';
+            orgNameText.textContent = currentTenant.name;
+          }
         } else {
           // 如果后端API失败，显示错误信息
           console.error('生成小程序码失败');
@@ -951,8 +970,8 @@
     // 社交媒体分享函数
     function getBookingLink() {
       if (!currentTenant || !currentTenant.name) return '#';
-      // 暂时使用GitHub Pages地址，部署后需要更新
-      return `https://runorbclub-beep.github.io/booking-website/booking.html?tenant=${tenantId}`;
+      // 使用生产域名
+      return `https://booking.runorb.org/booking.html?tenant=${tenantId}`;
     }
 
     function getShareText() {
@@ -969,7 +988,11 @@
         btn.querySelector('span:last-child').textContent = '已复制!';
         setTimeout(() => btn.querySelector('span:last-child').textContent = originalText, 2000);
       }).catch(() => {
-        alert('复制失败，请手动复制链接');
+        // 显示更友好的提示，告诉用户要复制什么链接
+        const linkToShow = link;
+        alert(`自动复制失败，请手动复制以下链接：\n\n${linkToShow}`);
+        // 尝试再次复制（有些浏览器需要用户交互后才能复制）
+        navigator.clipboard.writeText(link);
       });
     }
 
@@ -1038,6 +1061,9 @@
         alert('网络错误');
       }
     }
+
+    // 初始化：页面加载时设置默认语言文本
+    updateUIText();
   </script>
 </body>
 </html>

@@ -189,7 +189,7 @@
   </style>
 </head>
 <body>
-  <button class="lang-toggle" onclick="toggleLang()">EN</button>
+  <button class="lang-toggle" onclick="toggleLang()">中文</button>
 
   <div class="container">
     <div class="header">
@@ -262,7 +262,7 @@
 
   <script>
     const API_BASE = 'https://booking-api.billyli198841.workers.dev';
-    let lang = 'zh';
+    let lang = 'en';
     let tenantId = null;
     let tenantInfo = null;
     let selectedSlot = null;
@@ -509,6 +509,9 @@
     function hideError() {
       document.getElementById('errorMsg').style.display = 'none';
     }
+
+    // 初始化：页面加载时设置默认语言文本
+    updateUIText();
 
     // 初始化
     if (!tenantId) {

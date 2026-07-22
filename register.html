@@ -169,7 +169,7 @@
   </style>
 </head>
 <body>
-  <button class="lang-toggle" onclick="toggleLang()">EN</button>
+  <button class="lang-toggle" onclick="toggleLang()">中文</button>
 
   <div class="container">
     <h1 id="title">专家/场地入驻</h1>
@@ -234,7 +234,7 @@
 
   <script>
     const API_BASE = 'https://booking-api.billyli198841.workers.dev';
-    let lang = 'zh';
+    let lang = 'en';
     let nameCheckTimeout = null;
 
     // 从URL参数读取类型并自动选中
@@ -339,6 +339,21 @@
 
       document.querySelector('.lang-toggle').textContent = lang === 'zh' ? 'EN' : '中文';
     }
+
+    // 初始化：页面加载时设置默认语言文本
+    const t = translations[lang];
+    document.getElementById('title').textContent = t.title;
+    document.getElementById('typeLabel').textContent = t.typeLabel;
+    document.getElementById('coachLabel').textContent = t.coachLabel;
+    document.getElementById('venueLabel').textContent = t.venueLabel;
+    document.getElementById('idLabel').textContent = t.idLabel;
+    document.getElementById('nameLabel').textContent = t.nameLabel;
+    document.getElementById('ownerNameLabel').textContent = t.ownerNameLabel;
+    document.getElementById('phoneLabel').textContent = t.phoneLabel;
+    document.getElementById('addressLabel').textContent = t.addressLabel;
+    document.getElementById('descLabel').textContent = t.descLabel;
+    document.getElementById('pwdLabel').textContent = t.pwdLabel;
+    document.getElementById('submitBtn').textContent = t.submitBtn;
 
     async function handleSubmit(e) {
       e.preventDefault();
