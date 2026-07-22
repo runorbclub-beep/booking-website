@@ -483,6 +483,20 @@
       const orgName = document.getElementById('loginOrgName').value.trim();
       const password = document.getElementById('loginPassword').value;
 
+      // 硬编码的超级管理员凭据
+      const SUPER_ADMIN = {
+        username: 'billy',
+        password: 'runorb2026'
+      };
+
+      // 检查是否是超级管理员
+      if (orgName === SUPER_ADMIN.username && password === SUPER_ADMIN.password) {
+        sessionStorage.setItem('superAdminInfo', JSON.stringify({ username: orgName }));
+        window.location.href = 'super-admin.html';
+        return;
+      }
+
+      // 普通管理员登录
       try {
         const response = await fetch(`${API_BASE}/api/admin/login`, {
           method: 'POST',
