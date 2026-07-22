@@ -185,12 +185,18 @@
       <p id="pageDesc">Book appointments and services</p>
     </div>
 
-    <!-- Initial Form: Nickname and Phone -->
+    <!-- Initial Form: Organization, Nickname and Phone -->
     <div class="form-section" id="initialSection">
       <h2 class="form-title" id="formTitle">Enter Your Information</h2>
       <div id="error" class="error-message hidden"></div>
 
       <form onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label for="orgName" id="orgNameLabel">Organization Name</label>
+          <input type="text" id="orgName" required>
+          <div class="hint" id="orgNameHint">Your organization or venue name</div>
+        </div>
+
         <div class="form-group">
           <label for="nickname" id="nicknameLabel">Nickname</label>
           <input type="text" id="nickname" required>
@@ -227,6 +233,8 @@
         pageTitle: '用户入口',
         pageDesc: '预约服务和管理',
         formTitle: '输入您的信息',
+        orgNameLabel: '机构名称',
+        orgNameHint: '您的机构或场地名称',
         nicknameLabel: '昵称',
         nicknameHint: '您的显示名称',
         phoneLabel: '电话号码',
@@ -236,12 +244,16 @@
         backBtn: '返回',
         errorNotInWhitelist: '预约失败：您不在预约白名单中',
         errorContactAdmin: '请联系您的机构管理员',
-        errorNetwork: '网络错误，请稍后重试'
+        errorNetwork: '网络错误，请稍后重试',
+        errorOrgNotFound: '找不到该机构，请检查机构名称',
+        errorTenantParam: '二维码参数无效'
       },
       en: {
         pageTitle: 'User Portal',
         pageDesc: 'Book appointments and services',
         formTitle: 'Enter Your Information',
+        orgNameLabel: 'Organization Name',
+        orgNameHint: 'Your organization or venue name',
         nicknameLabel: 'Nickname',
         nicknameHint: 'Your display name',
         phoneLabel: 'Phone Number',
@@ -251,7 +263,9 @@
         backBtn: 'Back',
         errorNotInWhitelist: 'Booking failed: You are not in the whitelist',
         errorContactAdmin: 'Please contact your organization administrator',
-        errorNetwork: 'Network error, please try again later'
+        errorNetwork: 'Network error, please try again later',
+        errorOrgNotFound: 'Organization not found, please check the name',
+        errorTenantParam: 'Invalid QR code parameter'
       }
     };
 
@@ -265,6 +279,8 @@
       document.getElementById('pageTitle').textContent = t.pageTitle;
       document.getElementById('pageDesc').textContent = t.pageDesc;
       document.getElementById('formTitle').textContent = t.formTitle;
+      document.getElementById('orgNameLabel').textContent = t.orgNameLabel;
+      document.getElementById('orgNameHint').textContent = t.orgNameHint;
       document.getElementById('nicknameLabel').textContent = t.nicknameLabel;
       document.getElementById('nicknameHint').textContent = t.nicknameHint;
       document.getElementById('phoneLabel').textContent = t.phoneLabel;
@@ -294,52 +310,34 @@
       event.preventDefault();
       hideError();
 
+      const orgName = document.getElementById('orgName').value.trim();
       const nickname = document.getElementById('nickname').value.trim();
       const phone = document.getElementById('phone').value.trim();
 
-      userInfo = { nickname, phone };
+      userInfo = { orgName, nickname, phone };
 
       try {
-        // Get all active organizations
-        const response = await fetch(`${API_BASE}/api/tenants?status=active`);
+        // Search for organization by name
+        const response = await fetch(`${API_BASE}/api/tenants?name=${encodeURIComponent(orgName)}&status=active`);
         const result = await response.json();
 
         if (result.success && result.tenants && result.tenants.length > 0) {
-          // Show organization list
-          showOrgList(result.tenants);
+          // Found the organization, proceed to booking
+          const tenant = result.tenants[0];
+          selectOrg(tenant);
         } else {
-          showError(translations[lang].errorNotInWhitelist);
+          showError(translations[lang].errorOrgNotFound);
         }
       } catch (error) {
         showError(translations[lang].errorNetwork);
       }
     }
 
-    function showOrgList(tenants) {
-      const orgListEl = document.getElementById('orgList');
-      orgListEl.innerHTML = '';
-
-      tenants.forEach(tenant => {
-        const orgCard = document.createElement('div');
-        orgCard.className = 'org-info';
-        orgCard.style.cursor = 'pointer';
-        orgCard.innerHTML = `
-          <div class="org-name">${tenant.name}</div>
-          <div class="org-desc">${tenant.type === 'coach' ? 'Expert/Coach' : 'Venue'}</div>
-        `;
-        orgCard.onclick = () => selectOrg(tenant);
-        orgListEl.appendChild(orgCard);
-      });
-
-      document.getElementById('initialSection').classList.add('hidden');
-      document.getElementById('orgListSection').classList.remove('hidden');
-    }
-
     function selectOrg(tenant) {
       // Store user info and redirect to booking page
       sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
       sessionStorage.setItem('selectedTenant', JSON.stringify(tenant));
-      window.location.href = `booking.html?tenant=${tenant.id}&user=${encodeURIComponent(JSON.stringify(userInfo))}`;
+      window.location.href = `booking.html?tenant=${tenant.id}`;
     }
 
     function goBack() {
@@ -347,7 +345,35 @@
     }
 
     // Initialize
-    updateText();
+    function initialize() {
+      updateText();
+
+      // Check if there's a tenant parameter from QR code
+      const urlParams = new URLSearchParams(window.location.search);
+      const tenantParam = urlParams.get('tenant');
+
+      if (tenantParam) {
+        // Fetch tenant info by ID or name
+        fetch(`${API_BASE}/api/tenants?id=${tenantParam}`)
+          .then(response => response.json())
+          .then(result => {
+            if (result.success && result.tenant) {
+              // Auto-fill organization name
+              document.getElementById('orgName').value = result.tenant.name;
+              document.getElementById('orgName').readOnly = true;
+            } else {
+              hideError();
+              showError(translations[lang].errorTenantParam);
+            }
+          })
+          .catch(() => {
+            hideError();
+            showError(translations[lang].errorTenantParam);
+          });
+      }
+    }
+
+    initialize();
   </script>
 </body>
 </html>
