@@ -221,7 +221,7 @@
 
     <!-- Step 2: 选择日期和时段 -->
     <div class="step" id="step2">
-      <button class="back-btn" onclick="goBack(1)">← 返回</button>
+      <button class="back-btn" onclick="goBack(1)" id="backBtn1">← Back</button>
 
       <div class="form-group">
         <label for="date" id="dateLabel">选择日期</label>
@@ -238,25 +238,25 @@
 
     <!-- Step 3: 确认信息 -->
     <div class="step" id="step3">
-      <button class="back-btn" onclick="goBack(2)">← 返回</button>
+      <button class="back-btn" onclick="goBack(2)" id="backBtn2">← Back</button>
 
       <div class="form-group" style="background: #f9fafb; padding: 15px; border-radius: 10px;">
-        <p><strong id="summaryDate">日期:</strong> <span id="summaryDateValue"></span></p>
-        <p><strong id="summaryTime">时段:</strong> <span id="summaryTimeValue"></span></p>
-        <p><strong id="summaryName">姓名:</strong> <span id="summaryNameValue"></span></p>
-        <p><strong id="summaryPhone">手机号:</strong> <span id="summaryPhoneValue"></span></p>
-        <p><strong id="summaryNote">备注:</strong> <span id="summaryNoteValue"></span></p>
+        <p><strong id="summaryDate">Date:</strong> <span id="summaryDateValue"></span></p>
+        <p><strong id="summaryTime">Time Slot:</strong> <span id="summaryTimeValue"></span></p>
+        <p><strong id="summaryName">Name:</strong> <span id="summaryNameValue"></span></p>
+        <p><strong id="summaryPhone">Phone:</strong> <span id="summaryPhoneValue"></span></p>
+        <p><strong id="summaryNote">Note:</strong> <span id="summaryNoteValue"></span></p>
       </div>
 
-      <button onclick="submitBooking()" id="btnSubmit">提交预约</button>
+      <button onclick="submitBooking()" id="btnSubmit">Submit Booking</button>
     </div>
 
     <!-- 成功提示 -->
     <div class="success" id="successMsg">
-      <h3>🎉 预约成功！</h3>
-      <p id="successDesc">您的预约已提交，等待确认</p>
-      <p><strong id="summaryDate2">日期:</strong> <span id="finalDate"></span></p>
-      <p><strong id="summaryTime2">时段:</strong> <span id="finalTime"></span></p>
+      <h3 id="successTitle">🎉 Booking Successful!</h3>
+      <p id="successDesc">Your booking has been submitted, awaiting confirmation</p>
+      <p><strong id="summaryDate2">Date:</strong> <span id="finalDate"></span></p>
+      <p><strong id="summaryTime2">Time Slot:</strong> <span id="finalTime"></span></p>
     </div>
   </div>
 
@@ -285,7 +285,9 @@
         btnSubmit: '提交预约',
         summaryDate: '日期:',
         summaryTime: '时段:',
+        summaryName: '姓名:',
         summaryPhone: '手机号:',
+        summaryNote: '备注:',
         successTitle: '🎉 预约成功！',
         successDesc: '您的预约已提交，等待确认',
         errorInvalidTenant: '无效的工作室ID',
@@ -311,7 +313,9 @@
         btnSubmit: 'Submit Booking',
         summaryDate: 'Date:',
         summaryTime: 'Time Slot:',
+        summaryName: 'Name:',
         summaryPhone: 'Phone:',
+        summaryNote: 'Note:',
         successTitle: '🎉 Booking Successful!',
         successDesc: 'Your booking has been submitted, awaiting confirmation',
         errorInvalidTenant: 'Invalid studio ID',
@@ -346,10 +350,15 @@
       document.getElementById('btnSubmit').textContent = t.btnSubmit;
       document.getElementById('summaryDate').textContent = t.summaryDate;
       document.getElementById('summaryTime').textContent = t.summaryTime;
+      document.getElementById('summaryName').textContent = t.summaryName;
       document.getElementById('summaryPhone').textContent = t.summaryPhone;
+      document.getElementById('summaryNote').textContent = t.summaryNote;
       document.getElementById('successDesc').textContent = t.successDesc;
+      document.getElementById('successTitle').textContent = t.successTitle;
       document.getElementById('summaryDate2').textContent = t.summaryDate2;
       document.getElementById('summaryTime2').textContent = t.summaryTime2;
+      document.getElementById('backBtn1').textContent = t.back;
+      document.getElementById('backBtn2').textContent = t.back;
     }
 
     function goToStep2() {
