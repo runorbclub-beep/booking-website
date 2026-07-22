@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>浏览预约 - 霸族预约助手</title>
+  <title>Browse - Booking Assistant</title>
   <style>
     * {
       margin: 0;
@@ -223,25 +223,25 @@
   <button class="lang-toggle" onclick="toggleLang()">中文</button>
 
   <div class="header">
-    <button class="back-btn" onclick="goBack()">← 返回首页</button>
+    <button class="back-btn" onclick="goBack()" id="backBtn">← Back to Home</button>
 
     <div class="mode-bar" onclick="switchMode()">
-      <span class="mode-bar-text" id="modeText">当前：专家预约</span>
-      <span class="mode-bar-action">切换 ›</span>
+      <span class="mode-bar-text" id="modeText">Current: Expert Booking</span>
+      <span class="mode-bar-action" id="switchText">Switch ›</span>
     </div>
 
     <div class="search-bar">
-      <input type="text" class="search-input" id="searchInput" placeholder="搜索名称或地址" onconfirm="doSearch()">
-      <button class="search-btn" onclick="doSearch()">搜索</button>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search name or address" onconfirm="doSearch()">
+      <button class="search-btn" onclick="doSearch()" id="searchBtn">Search</button>
     </div>
   </div>
 
   <div class="container">
     <div id="tenantList"></div>
-    <div id="loading" class="loading">加载中...</div>
+    <div id="loading" class="loading">Loading...</div>
     <div id="empty" class="empty" style="display: none">
       <div class="empty-icon">📭</div>
-      <div class="empty-text">暂无入驻</div>
+      <div class="empty-text">No listings yet</div>
     </div>
   </div>
 
@@ -261,7 +261,10 @@
         coachTag: '专家',
         venueTag: '场地',
         ownerPrefix: '负责人：',
-        emptyText: '暂无入驻'
+        emptyText: '暂无入驻',
+        backBtn: '← 返回首页',
+        switchText: '切换 ›',
+        loading: '加载中...'
       },
       en: {
         modeCoach: 'Current: Coach Booking',
@@ -271,7 +274,10 @@
         coachTag: 'Coach',
         venueTag: 'Venue',
         ownerPrefix: 'Owner: ',
-        emptyText: 'No listings yet'
+        emptyText: 'No listings yet',
+        backBtn: '← Back to Home',
+        switchText: 'Switch ›',
+        loading: 'Loading...'
       }
     };
 
@@ -284,8 +290,12 @@
     function updateText() {
       const t = translations[lang];
       document.getElementById('modeText').textContent = mode === 'coach' ? t.modeCoach : t.modeVenue;
+      document.getElementById('switchText').textContent = t.switchText;
       document.getElementById('searchInput').placeholder = t.searchPlaceholder;
-      document.querySelector('.search-btn').textContent = t.searchBtn;
+      document.getElementById('searchBtn').textContent = t.searchBtn;
+      document.getElementById('backBtn').textContent = t.backBtn;
+      document.getElementById('loading').textContent = t.loading;
+      document.getElementById('empty').querySelector('.empty-text').textContent = t.emptyText;
     }
 
     function goBack() {

@@ -378,84 +378,84 @@
 </head>
 <body>
   <div class="header">
-    <h1 id="headerTitle">管理后台</h1>
+    <h1 id="headerTitle">Admin Dashboard</h1>
     <button class="lang-toggle" onclick="toggleLang()">中文</button>
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="showTab('overview')" id="tabOverview">概览</button>
-    <button class="tab" onclick="showTab('whitelist')" id="tabWhitelist">白名单</button>
-    <button class="tab" onclick="showTab('bookings')" id="tabBookings">预约</button>
-    <button class="tab" onclick="showTab('share')" id="tabShare">分享</button>
+    <button class="tab active" onclick="showTab('overview')" id="tabOverview">Overview</button>
+    <button class="tab" onclick="showTab('whitelist')" id="tabWhitelist">Whitelist</button>
+    <button class="tab" onclick="showTab('bookings')" id="tabBookings">Bookings</button>
+    <button class="tab" onclick="showTab('share')" id="tabShare">Share</button>
   </div>
 
   <div class="tab-content active" id="content-overview">
     <div class="card">
-      <h2 id="studioInfo">工作室信息</h2>
+      <h2 id="studioInfo">Studio Information</h2>
       <div id="tenantInfo"></div>
     </div>
 
     <div class="card">
-      <h2 id="pwdTitle">修改密码</h2>
+      <h2 id="pwdTitle">Change Password</h2>
       <div class="form-group">
-        <label id="oldPwdLabel">原密码</label>
-        <input type="password" id="oldPassword" placeholder="请输入原密码">
+        <label id="oldPwdLabel">Current Password</label>
+        <input type="password" id="oldPassword" placeholder="Enter current password">
       </div>
       <div class="form-group">
-        <label id="newPwdLabel">新密码</label>
-        <input type="password" id="newPassword" placeholder="请输入新密码（至少6位）">
+        <label id="newPwdLabel">New Password</label>
+        <input type="password" id="newPassword" placeholder="Enter new password (min 6 characters)">
       </div>
       <div class="form-group">
-        <label id="confirmPwdLabel">确认新密码</label>
-        <input type="password" id="confirmPassword" placeholder="请再次输入新密码">
+        <label id="confirmPwdLabel">Confirm New Password</label>
+        <input type="password" id="confirmPassword" placeholder="Re-enter new password">
       </div>
-      <button onclick="changePassword()" id="btnChangePwd">修改密码</button>
+      <button onclick="changePassword()" id="btnChangePwd">Change Password</button>
     </div>
   </div>
 
   <div class="tab-content" id="content-whitelist">
     <div class="card">
-      <h2 id="addToWhitelist">添加客户到白名单</h2>
+      <h2 id="addToWhitelist">Add Customer to Whitelist</h2>
       <div class="form-group">
-        <label id="wlPhoneLabel">客户手机号</label>
+        <label id="wlPhoneLabel">Customer Phone</label>
         <input type="tel" id="wlPhone" placeholder="13800138000">
       </div>
       <div class="form-group">
-        <label id="wlNameLabel">客户姓名（选填）</label>
-        <input type="text" id="wlName" placeholder="张三">
+        <label id="wlNameLabel">Customer Name (Optional)</label>
+        <input type="text" id="wlName" placeholder="John Doe">
       </div>
-      <button onclick="addWhitelist()" id="btnAddWhitelist">添加</button>
+      <button onclick="addWhitelist()" id="btnAddWhitelist">Add</button>
     </div>
 
     <div class="card">
-      <h2 id="whitelistTitle">白名单列表</h2>
+      <h2 id="whitelistTitle">Whitelist</h2>
       <div id="whitelistList"></div>
     </div>
   </div>
 
   <div class="tab-content" id="content-bookings">
     <div class="card">
-      <h2 id="bookingsTitle">预约记录</h2>
+      <h2 id="bookingsTitle">Bookings</h2>
       <div id="bookingsList"></div>
     </div>
   </div>
 
   <div class="tab-content" id="content-share">
     <div class="card">
-      <h2 id="shareTitle">分享工作室</h2>
+      <h2 id="shareTitle">Share Studio</h2>
       <p id="shareDesc" style="margin-bottom: 20px; color: #666;">
-        将二维码或链接分享到社交媒体，让更多客户了解您的服务
+        Share QR code or link to social media to reach more customers
       </p>
 
       <!-- 机构名称显示 -->
       <div class="org-name-display" id="orgNameDisplay" style="display: none;">
-        <h3>🏢 机构名称</h3>
+        <h3>🏢 Organization Name</h3>
         <div class="org-name-content" id="orgNameContent"></div>
       </div>
 
       <div class="qrcode">
-        <h3>📱 您的二维码</h3>
-        <p style="font-size: 12px; color: #666; margin-bottom: 10px;">客户扫描小程序码即可预约</p>
+        <h3>📱 Your QR Code</h3>
+        <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Customers scan to book</p>
 
         <!-- 机构名称显示 -->
         <div class="org-name-display" id="orgNameDisplay" style="display: none;">
@@ -470,7 +470,7 @@
             <span id="orgNameText"></span>
           </div>
         </div>
-        <button onclick="downloadQRCode()" style="margin-top: 10px;" id="btnDownloadQR">💾 下载二维码</button>
+        <button onclick="downloadQRCode()" style="margin-top: 10px;" id="btnDownloadQR">💾 Download QR</button>
       </div>
 
       <!-- 社交媒体分享 -->
@@ -505,17 +505,17 @@
 
   <div class="modal" id="loginModal">
     <div class="modal-content">
-      <h2 id="loginTitle">管理员登录</h2>
+      <h2 id="loginTitle">Admin Login</h2>
       <div class="form-group">
-        <label id="loginNameLabel">工作室名称</label>
-        <input type="text" id="loginName" placeholder="请输入工作室名称">
+        <label id="loginNameLabel">Studio Name</label>
+        <input type="text" id="loginName" placeholder="Enter studio name">
       </div>
       <div class="form-group">
-        <label id="loginPwdLabel">管理密码</label>
-        <input type="password" id="loginPassword" placeholder="请输入管理密码">
+        <label id="loginPwdLabel">Admin Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter admin password">
       </div>
-      <button onclick="doLogin()" id="btnLogin">登录</button>
-      <button class="secondary" onclick="closeLoginModal()" style="margin-top: 10px;" id="btnCancel">取消</button>
+      <button onclick="doLogin()" id="btnLogin">Login</button>
+      <button class="secondary" onclick="closeLoginModal()" style="margin-top: 10px;" id="btnCancel">Cancel</button>
     </div>
   </div>
 
@@ -537,6 +537,11 @@
         tabBookings: '预约',
         tabShare: '分享',
         studioInfo: '工作室信息',
+        pwdTitle: '修改密码',
+        oldPwdLabel: '原密码',
+        newPwdLabel: '新密码',
+        confirmPwdLabel: '确认新密码',
+        btnChangePwd: '修改密码',
         addToWhitelist: '添加客户到白名单',
         wlPhoneLabel: '客户手机号',
         wlNameLabel: '客户姓名（选填）',
@@ -548,6 +553,7 @@
         btnCopy: '复制链接',
         btnDownloadQR: '下载二维码',
         loginTitle: '管理员登录',
+        loginNameLabel: '工作室名称',
         loginPwdLabel: '管理密码',
         btnLogin: '登录',
         btnCancel: '取消',
@@ -576,6 +582,11 @@
         tabBookings: 'Bookings',
         tabShare: 'Share',
         studioInfo: 'Studio Info',
+        pwdTitle: 'Change Password',
+        oldPwdLabel: 'Current Password',
+        newPwdLabel: 'New Password',
+        confirmPwdLabel: 'Confirm New Password',
+        btnChangePwd: 'Change Password',
         addToWhitelist: 'Add Customer to Whitelist',
         wlPhoneLabel: 'Customer Phone',
         wlNameLabel: 'Customer Name (optional)',
@@ -587,6 +598,7 @@
         btnCopy: 'Copy Link',
         btnDownloadQR: 'Download QR',
         loginTitle: 'Admin Login',
+        loginNameLabel: 'Studio Name',
         loginPwdLabel: 'Admin Password',
         btnLogin: 'Login',
         btnCancel: 'Cancel',
@@ -625,6 +637,11 @@
       document.getElementById('tabBookings').textContent = t.tabBookings;
       document.getElementById('tabShare').textContent = t.tabShare;
       document.getElementById('studioInfo').textContent = t.studioInfo;
+      document.getElementById('pwdTitle').textContent = t.pwdTitle;
+      document.getElementById('oldPwdLabel').textContent = t.oldPwdLabel;
+      document.getElementById('newPwdLabel').textContent = t.newPwdLabel;
+      document.getElementById('confirmPwdLabel').textContent = t.confirmPwdLabel;
+      document.getElementById('btnChangePwd').textContent = t.btnChangePwd;
       document.getElementById('addToWhitelist').textContent = t.addToWhitelist;
       document.getElementById('wlPhoneLabel').textContent = t.wlPhoneLabel;
       document.getElementById('wlNameLabel').textContent = t.wlNameLabel;
@@ -636,6 +653,7 @@
       document.getElementById('btnCopy').textContent = t.btnCopy;
       document.getElementById('btnDownloadQR').textContent = t.btnDownloadQR;
       document.getElementById('loginTitle').textContent = t.loginTitle;
+      document.getElementById('loginNameLabel').textContent = t.loginNameLabel;
       document.getElementById('loginPwdLabel').textContent = t.loginPwdLabel;
       document.getElementById('btnLogin').textContent = t.btnLogin;
       document.getElementById('btnCancel').textContent = t.btnCancel;
